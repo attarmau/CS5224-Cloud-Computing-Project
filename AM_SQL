@@ -2,3 +2,12 @@
 SELECT DISTINCT customer_name
 FROM your_table_name
 WHERE customer_name IS NOT NULL;
+
+# What can you add to your table definition to ensure that only records with a tolerance value within that range can be added to the table?
+CREATE TABLE your_table_name (
+  -- other column definitions
+  
+  tolerance_level DECIMAL(3, 1) CHECK (tolerance_level >= 2.0 AND tolerance_level <= 5.1),
+  
+  -- other column definitions
+);

@@ -1,0 +1,4 @@
+# You are given a SELECT statement showing customer names and orders. Customer names can repeat for multiple orders. How can you change the query to return a list of customers who ordered at least once?
+SELECT DISTINCT customer_name
+FROM your_table_name
+WHERE customer_name IS NOT NULL;

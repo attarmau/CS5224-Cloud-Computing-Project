@@ -17,3 +17,7 @@ CREATE VIEW your_view_name AS
 SELECT email_address, first_name, last_name, rank
 FROM your_table_name
 ORDER BY rank ASC, last_name DESC, first_name DESC;
+
+# behave more like a keyword search for phrases
+# The LIKE operator is used in the WHERE clause to perform pattern matching. The percent sign (%) is a wildcard that matches any sequence of characters.
+SELECT * FROM data_table WHERE search_term LIKE '%<user_input>%';

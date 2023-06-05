@@ -11,3 +11,9 @@ CREATE TABLE your_table_name (
   
   -- other column definitions
 );
+
+# increase order; decrease order
+CREATE VIEW your_view_name AS
+SELECT email_address, first_name, last_name, rank
+FROM your_table_name
+ORDER BY rank ASC, last_name DESC, first_name DESC;

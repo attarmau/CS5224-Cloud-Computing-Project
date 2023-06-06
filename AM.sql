@@ -21,3 +21,5 @@ ORDER BY rank ASC, last_name DESC, first_name DESC;
 # behave more like a keyword search for phrases
 ## The LIKE operator is used in the WHERE clause to perform pattern matching. The percent sign (%) is a wildcard that matches any sequence of characters.
 SELECT * FROM data_table WHERE search_term LIKE '%<user_input>%';
+
+# Write a SQL query to get the average review ratings for every product every month.

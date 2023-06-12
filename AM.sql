@@ -39,3 +39,11 @@ CREATE TABLE customers (
     email VARCHAR(100),
     address VARCHAR(200)
 );
+
+-- Table: products
+CREATE TABLE products (
+    product_id INT PRIMARY KEY,
+    product_name VARCHAR(100),
+    price DECIMAL(10, 2),
+    description VARCHAR(500)
+);

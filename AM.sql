@@ -31,3 +31,11 @@ FROM reviews
 GROUP BY EXTRACT(MONTH FROM submit_date), product_id
 ORDER BY mth, product_id;
 
+-- Table: customers
+CREATE TABLE customers (
+    customer_id INT PRIMARY KEY,
+    first_name VARCHAR(50),
+    last_name VARCHAR(50),
+    email VARCHAR(100),
+    address VARCHAR(200)
+);

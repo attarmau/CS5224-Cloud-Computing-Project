@@ -65,3 +65,8 @@ CREATE TABLE customers (
     name VARCHAR(50),
     email VARCHAR(100)
 );
+
+#  retrieve a list of employees with their corresponding department names
+SELECT e.name, d.department_name
+FROM employees e
+JOIN departments d ON e.department_id = d.department_id;

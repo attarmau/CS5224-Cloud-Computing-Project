@@ -58,3 +58,10 @@ CREATE TABLE orders (
     FOREIGN KEY (customer_id) REFERENCES customers(customer_id),
     FOREIGN KEY (product_id) REFERENCES products(product_id)
 );
+
+# Creating a Table
+CREATE TABLE customers (
+    id INT,
+    name VARCHAR(50),
+    email VARCHAR(100)
+);

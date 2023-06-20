@@ -70,3 +70,5 @@ CREATE TABLE customers (
 SELECT e.name, d.department_name
 FROM employees e
 JOIN departments d ON e.department_id = d.department_id;
+
+# count the number of employees in the "Sales" department:

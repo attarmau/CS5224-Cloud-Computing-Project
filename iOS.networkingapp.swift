@@ -9,12 +9,17 @@ class ViewController: UIViewController {
         guard let url = URL(string: "https://api.example.com/data") else {
             return
         }
+     
+        // Add headers if needed
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("Bearer YOUR_AUTH_TOKEN", forHTTPHeaderField: "Authorization")
         
-        URLSession.shared.dataTask(with: url) { (data, response, error) in
+        URLSession.shared.dataTask(with: request) { (data, response, error) in
             if let error = error {
                 print("Error: \(error.localizedDescription)")
                 return
             }
+                                                   
  if let data = data {
                 // Process the response data
                 do {

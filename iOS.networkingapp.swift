@@ -34,5 +34,23 @@ class ViewController: UIViewController {
         }.resume()
     }
     
-    // Other methods and UI components...
+       // Add UILabel
+        let label = UILabel(frame: CGRect(x: 50, y: 100, width: 200, height: 30))
+        label.text = "Hello, World!"
+        label.textAlignment = .center
+        self.view.addSubview(label)
+        
+        // Add UIButton
+        let button = UIButton(type: .system)
+        button.frame = CGRect(x: 100, y: 200, width: 100, height: 50)
+        button.setTitle("Tap Me", for: .normal)
+        button.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
+        self.view.addSubview(button)
+    }
+    
+    @objc func buttonTapped() {
+        print("Button tapped!")
+    }
+    
+    // Other methods...
 }

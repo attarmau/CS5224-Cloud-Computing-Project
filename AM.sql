@@ -77,8 +77,8 @@ FROM employees
 WHERE department = 'Sales';
 
 # Write a SQL query to retrieve the total number of orders, total sales amount, 
-  and average sales amount for each customer residing in the city of "New York". 
-  Sort the results in descending order based on the total sales amount.
+# and average sales amount for each customer residing in the city of "New York". 
+# Sort the results in descending order based on the total sales amount.
 SELECT c.FirstName, c.LastName, COUNT(o.OrderID) AS TotalOrders, SUM(o.TotalAmount) AS TotalSalesAmount, AVG(o.TotalAmount) AS AverageSalesAmount
 FROM Customers c
 INNER JOIN Orders o ON c.CustomerID = o.CustomerID

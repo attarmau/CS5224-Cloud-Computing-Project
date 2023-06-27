@@ -11,22 +11,7 @@ class ViewController: UIViewController {
         fetchData()
     }
                                                    
- if let data = data {
-                // Process the response data
-                do {
-                    let jsonResponse = try JSONSerialization.jsonObject(with: data, options: [])
-                    print("Response: \(jsonResponse)")
-                    
-                    // You can parse and handle the response data as needed
-                } catch {
-                    print("Error parsing response data: \(error)")
-                }
-            }
-        }.resume()
-    }
-    
-       // Add UILabel
-        let label = UILabel(frame: CGRect(x: 50, y: 100, width: 200, height: 30))
+ y: 100, width: 200, height: 30))
         label.text = "Hello, World!"
         label.textAlignment = .center
         self.view.addSubview(label)

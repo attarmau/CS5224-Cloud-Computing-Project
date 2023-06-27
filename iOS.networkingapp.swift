@@ -1,23 +1,15 @@
 import UIKit
 
 class ViewController: UIViewController {
-   override func viewDidLoad() {
+    
+    override func viewDidLoad() {
         super.viewDidLoad()
         
-        // Make a GET request
-        guard let url = URL(string: "https://api.example.com/data") else {
-            return
-        }
-     
-        // Add headers if needed
-        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.addValue("Bearer YOUR_AUTH_TOKEN", forHTTPHeaderField: "Authorization")
+        addLabel()
+        addButton()
         
-        URLSession.shared.dataTask(with: request) { (data, response, error) in
-            if let error = error {
-                print("Error: \(error.localizedDescription)")
-                return
-            }
+        fetchData()
+    }
                                                    
  if let data = data {
                 // Process the response data

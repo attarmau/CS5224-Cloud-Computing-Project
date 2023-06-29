@@ -159,8 +159,45 @@ class ViewController: UIViewController {
             } catch {
                 print("Error parsing response data: \(error)")
             }
+        }.resume()
+    }
+}
+
+    func performPATCHRequest() {
+    guard let url = URL(string: "https://api.example.com/patch") else {
+        return
+    }
+    
+    var request = URLRequest(url: url)
+    request.httpMethod = "PATCH"
+    request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+    request.addValue("Bearer YOUR_AUTH_TOKEN", forHTTPHeaderField: "Authorization")
+    
+    // Add the request body if needed
+    let requestBody = ["key": "value"]
+    if let jsonData = try? JSONSerialization.data(withJSONObject: requestBody) {
+        request.httpBody = jsonData
+    }
+    
+    URLSession.shared.dataTask(with: request) { (data, response, error) in
+        if let error = error {
+            print("Error: \(error.localizedDescription)")
+            return
         }
-    }.resume()
+        
+        if let data = data {
+            // Process the response data
+            do {
+                let jsonResponse = try JSONSerialization.jsonObject(with: data, options: [])
+                print("Response: \(jsonResponse)")
+                
+                // You can parse and handle the response data as needed
+                
+            } catch {
+                print("Error parsing response data: \(error)")
+            }
+        }.resume()
+    }
 }
 
 }

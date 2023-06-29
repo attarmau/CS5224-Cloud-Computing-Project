@@ -131,6 +131,7 @@ class ViewController: UIViewController {
             }
         }.resume()
     }
+    
     func performDELETERequest() {
     guard let url = URL(string: "https://api.example.com/delete") else {
         return

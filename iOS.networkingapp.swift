@@ -94,7 +94,6 @@ class ViewController: UIViewController {
             }
         }.resume()
     }
-    
    func performPUTRequest() {
         guard let url = URL(string: "https://api.example.com/put") else {
             return

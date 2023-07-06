@@ -58,7 +58,37 @@ class ViewController: UIViewController {
         }.resume()
     }
     
-    // Additional methods
+    func performGETRequest() {
+    guard let url = URL(string: "https://api.example.com/get") else {
+        return
+    }
+    
+    var request = URLRequest(url: url)
+    request.httpMethod = "GET"
+    request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+    request.addValue("Bearer YOUR_AUTH_TOKEN", forHTTPHeaderField: "Authorization")
+    
+    URLSession.shared.dataTask(with: request) { (data, response, error) in
+        if let error = error {
+            print("Error: \(error.localizedDescription)")
+            return
+        }
+        
+        if let data = data {
+            // Process the response data
+            do {
+                let jsonResponse = try JSONSerialization.jsonObject(with: data, options: [])
+                print("Response: \(jsonResponse)")
+                
+                // You can parse and handle the response data as needed
+                
+            } catch {
+                print("Error parsing response data: \(error)")
+            }
+        }
+    }.resume()
+}
+
     
     func performPOSTRequest() {
         guard let url = URL(string: "https://api.example.com/post") else {

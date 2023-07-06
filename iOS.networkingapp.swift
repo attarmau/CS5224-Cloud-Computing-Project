@@ -59,7 +59,7 @@ class ViewController: UIViewController {
     }
     
     func performGETRequest() {
-    guard let url = URL(string: "https://api.example.com/get") else {
+        guard let url = URL(string: "https://api.example.com/get") else {
         return
     }
     
@@ -87,7 +87,7 @@ class ViewController: UIViewController {
             }
         }
     }.resume()
-}
+  }
 
     
     func performPOSTRequest() {

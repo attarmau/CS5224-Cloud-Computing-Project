@@ -3,12 +3,12 @@ import UIKit
 class ViewController: UIViewController {
     
     override func viewDidLoad() {
-        super.viewDidLoad()   
+        super.viewDidLoad()
         addLabel()
         addButton()
         fetchData()
     }
-
+    
     func addLabel() {
         let label = UILabel(frame: CGRect(x: 50, y: 100, width: 200, height: 30))
         label.text = "Hello, World!"
@@ -58,35 +58,34 @@ class ViewController: UIViewController {
     
     func performGETRequest() {
         guard let url = URL(string: "https://api.example.com/get") else {
-        return
-    }
-    
-    var request = URLRequest(url: url)
-    request.httpMethod = "GET"
-    request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-    request.addValue("Bearer YOUR_AUTH_TOKEN", forHTTPHeaderField: "Authorization")
-    
-    URLSession.shared.dataTask(with: request) { (data, response, error) in
-        if let error = error {
-            print("Error: \(error.localizedDescription)")
             return
         }
         
-        if let data = data {
-            // Process the response data
-            do {
-                let jsonResponse = try JSONSerialization.jsonObject(with: data, options: [])
-                print("Response: \(jsonResponse)")
-                
-                // You can parse and handle the response data as needed
-                
-            } catch {
-                print("Error parsing response data: \(error)")
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("Bearer YOUR_AUTH_TOKEN", forHTTPHeaderField: "Authorization")
+        
+        URLSession.shared.dataTask(with: request) { (data, response, error) in
+            if let error = error {
+                print("Error: \(error.localizedDescription)")
+                return
             }
-        }
-    }.resume()
-  }
-
+            
+            if let data = data {
+                // Process the response data
+                do {
+                    let jsonResponse = try JSONSerialization.jsonObject(with: data, options: [])
+                    print("Response: \(jsonResponse)")
+                    
+                    // You can parse and handle the response data as needed
+                    
+                } catch {
+                    print("Error parsing response data: \(error)")
+                }
+            }
+        }.resume()
+    }
     
     func performPOSTRequest() {
         guard let url = URL(string: "https://api.example.com/post") else {
@@ -123,7 +122,8 @@ class ViewController: UIViewController {
             }
         }.resume()
     }
-   func performPUTRequest() {
+    
+    func performPUTRequest() {
         guard let url = URL(string: "https://api.example.com/put") else {
             return
         }
@@ -161,52 +161,73 @@ class ViewController: UIViewController {
     }
     
     func performDELETERequest() {
-    guard let url = URL(string: "https://api.example.com/delete") else {
-        return
-    }
-    
-    var request = URLRequest(url: url)
-    request.httpMethod = "DELETE"
-    request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-    request.addValue("Bearer YOUR_AUTH_TOKEN", forHTTPHeaderField: "Authorization")
-    
-    URLSession.shared.dataTask(with: request) { (data, response, error) in
-        if let error = error {
-            print("Error: \(error.localizedDescription)")
+        guard let url = URL(string: "https://api.example.com/delete") else {
             return
         }
         
-        if let data = data {
-            // Process the response data
-            do {
-                let jsonResponse = try JSONSerialization.jsonObject(with: data, options: [])
-                print("Response: \(jsonResponse)")
-                
-                // You can parse and handle the response data as needed
-                
-            } catch {
-                print("Error parsing response data: \(error)")
+        var request = URLRequest(url: url)
+        request.httpMethod = "DELETE"
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("Bearer YOUR_AUTH_TOKEN", forHTTPHeaderField: "Authorization")
+        
+        URLSession.shared.dataTask(with: request) { (data, response, error) in
+            if let error = error {
+                print("Error: \(error.localizedDescription)")
+                return
+            }
+            
+            if let data = data {
+                // Process the response data
+                do {
+                    let jsonResponse = try JSONSerialization.jsonObject(with: data, options: [])
+                    print("Response: \(jsonResponse)")
+                    
+                    // You can parse and handle the response data as needed
+                    
+                } catch {
+                    print("Error parsing response data: \(error)")
+                }
             }
         }.resume()
     }
-}
-
+    
     func performPATCHRequest() {
-    guard let url = URL(string: "https://api.example.com/patch") else {
-        return
+        guard let url = URL(string: "https://api.example.com/patch") else {
+            return
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "PATCH"
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("Bearer YOUR_AUTH_TOKEN", forHTTPHeaderField: "Authorization")
+        
+        // Add the request body if needed
+        let requestBody = ["key": "value"]
+        if let jsonData = try? JSONSerialization.data(withJSONObject: requestBody) {
+            request.httpBody = jsonData
+        }
+        
+        URLSession.shared.dataTask(with: request) { (data, response, error) in
+            if let error = error {
+                print("Error: \(error.localizedDescription)")
+                return
+            }
+            
+            if let data = data {
+                // Process the response data
+                do {
+                    let jsonResponse = try JSONSerialization.jsonObject(with: data, options: [])
+                    print("Response: \(jsonResponse)")
+                    
+                    // You can parse and handle the response data as needed
+                    
+                } catch {
+                    print("Error parsingresponse data: \(error)")
+                }
+            }
+        }.resume()
     }
     
-    var request = URLRequest(url: url)
-    request.httpMethod = "PATCH"
-    request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-    request.addValue("Bearer YOUR_AUTH_TOKEN", forHTTPHeaderField: "Authorization")
-    
-    // Add the request body if needed
-    let requestBody = ["key": "value"]
-    if let jsonData = try? JSONSerialization.data(withJSONObject: requestBody) {
-        request.httpBody = jsonData
-    }
-
     func uploadImage(image: UIImage) {
         guard let url = URL(string: "https://api.example.com/upload") else {
             return
@@ -221,22 +242,40 @@ class ViewController: UIViewController {
             return
         }
         
-    URLSession.shared.dataTask(with: request) { (data, response, error) in
-        if let error = error {
-            print("Error: \(error.localizedDescription)")
-            return
-        }
+        let boundary = "Boundary-\(UUID().uuidString)"
+        request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
         
-        if let data = data {
-            // Process the response data
-            do {
-                let jsonResponse = try JSONSerialization.jsonObject(with: data, options: [])
-                print("Response: \(jsonResponse)")
-                
-                // You can parse and handle the response data as needed
-                
-            } catch {
-                print("Error parsing response data: \(error)")
+        var body = Data()
+        
+        // Add image data to the request body
+        body.append("--\(boundary)\r\n".data(using: .utf8)!)
+        body.append("Content-Disposition: form-data; name=\"image\"; filename=\"image.jpg\"\r\n".data(using: .utf8)!)
+        body.append("Content-Type: image/jpeg\r\n\r\n".data(using: .utf8)!)
+        body.append(imageData)
+        body.append("\r\n".data(using: .utf8)!)
+        
+        // Add more fields to the request body if needed
+        body.append("--\(boundary)--\r\n".data(using: .utf8)!)
+        
+        request.httpBody = body
+        
+        URLSession.shared.dataTask(with: request) { (data, response, error) in
+            if let error = error {
+                print("Error: \(error.localizedDescription)")
+                return
+            }
+            
+            if let data = data {
+                // Process the response data
+                do {
+                    let jsonResponse = try JSONSerialization.jsonObject(with: data, options: [])
+                    print("Response: \(jsonResponse)")
+                    
+                    // You can parse and handle the response data as needed
+                    
+                } catch {
+                    print("Error parsing response data: \(error)")
+                }
             }
         }.resume()
     }

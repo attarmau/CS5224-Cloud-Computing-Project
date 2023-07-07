@@ -206,7 +206,21 @@ class ViewController: UIViewController {
     if let jsonData = try? JSONSerialization.data(withJSONObject: requestBody) {
         request.httpBody = jsonData
     }
-    
+
+    func uploadImage(image: UIImage) {
+        guard let url = URL(string: "https://api.example.com/upload") else {
+            return
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.addValue("Bearer YOUR_AUTH_TOKEN", forHTTPHeaderField: "Authorization")
+        
+        // Convert image to data
+        guard let imageData = image.jpegData(compressionQuality: 1.0) else {
+            return
+        }
+        
     URLSession.shared.dataTask(with: request) { (data, response, error) in
         if let error = error {
             print("Error: \(error.localizedDescription)")

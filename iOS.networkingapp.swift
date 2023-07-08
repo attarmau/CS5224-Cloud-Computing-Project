@@ -34,6 +34,7 @@ class ViewController: UIViewController {
         alertController.addAction(okAction)
         self.present(alertController, animated: true, completion: nil)
     }
+    
     func fetchData() {
         guard let url = URL(string: "https://api.example.com/data") else {
             return

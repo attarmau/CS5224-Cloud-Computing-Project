@@ -25,7 +25,7 @@ class ViewController: UIViewController {
     }
     
     @objc func buttonTapped() {
-        print("Button tapped!")
+        showAlert(title: "Button Tapped", message: "You tapped the button!")
     }
     
     func fetchData() {

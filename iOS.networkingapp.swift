@@ -27,7 +27,13 @@ class ViewController: UIViewController {
     @objc func buttonTapped() {
         showAlert(title: "Button Tapped", message: "You tapped the button!")
     }
-    
+
+    func showAlert(title: String, message: String) {
+        let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+        alertController.addAction(okAction)
+        self.present(alertController, animated: true, completion: nil)
+    }
     func fetchData() {
         guard let url = URL(string: "https://api.example.com/data") else {
             return

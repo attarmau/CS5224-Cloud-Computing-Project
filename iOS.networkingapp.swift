@@ -9,6 +9,11 @@ class ViewController: UIViewController {
         fetchData()
     }
     
+    func calculateSum(num1: Int, num2: Int) {
+    let sum = num1 + num2
+    showAlert(title: "Sum Result", message: "The sum of \(num1) and \(num2) is \(sum).")
+    }
+    
     func addLabel() {
         let label = UILabel(frame: CGRect(x: 50, y: 100, width: 200, height: 30))
         label.text = "Hello, World!"

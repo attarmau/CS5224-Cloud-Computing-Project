@@ -7,6 +7,9 @@ class ViewController: UIViewController {
         addLabel()
         addButton()
         fetchData()
+
+        // Call the calculateSum function
+        calculateSum(num1: 5, num2: 10)
     }
     
     func calculateSum(num1: Int, num2: Int) {

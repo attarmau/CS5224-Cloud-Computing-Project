@@ -10,8 +10,8 @@ class ViewController: UIViewController {
     }
     
     func calculateSum(num1: Int, num2: Int) {
-    let sum = num1 + num2
-    showAlert(title: "Sum Result", message: "The sum of \(num1) and \(num2) is \(sum).")
+        let sum = num1 + num2
+        showAlert(title: "Sum Result", message: "The sum of \(num1) and \(num2) is \(sum).")
     }
     
     func addLabel() {

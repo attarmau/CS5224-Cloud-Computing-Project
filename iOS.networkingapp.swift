@@ -33,7 +33,7 @@ class ViewController: UIViewController {
     }
     
     @objc func buttonTapped() {
-        showAlert(title: "Button Tapped", message: "You tapped the button!")
+        showAlert (title: "Button Tapped", message: "You tapped the button!")
     }
 
     func showAlert(title: String, message: String) {
@@ -293,5 +293,19 @@ class ViewController: UIViewController {
                 }
             }
         }.resume()
+    }
+
+    func sendEmail(recipient: String, subject: String, message: String) {
+    // Prepare the email
+    let email = Email(recipient: recipient, subject: subject, message: message)
+    
+    // Send the email using an email service or API
+    EmailService.send(email: email) { result in
+        switch result {
+        case .success:
+            showAlert(title: "Email Sent", message: "Your email to \(recipient) was successfully sent.")
+        case .failure(let error):
+            showAlert(title: "Error", message: "Failed to send email. Error: \(error.localizedDescription)")
+        }
     }
 }

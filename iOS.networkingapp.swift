@@ -339,4 +339,3 @@ class ViewController: UIViewController {
         }
     }.resume()
 }    
-}

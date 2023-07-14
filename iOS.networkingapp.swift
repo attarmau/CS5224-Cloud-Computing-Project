@@ -338,4 +338,7 @@ class ViewController: UIViewController {
             }
         }
     }.resume()
-}    
+
+    func sendMessage(recipient: String, message: String) {
+    // Prepare the message
+    let messageObject = Message(recipient: recipient, content: message)

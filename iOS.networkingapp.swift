@@ -11,6 +11,7 @@ class ViewController: UIViewController {
         // Call the calculateSum function
         calculateSum(num1: 5, num2: 10)
 
+        // Call the sendMessage function
         sendMessage(recipient: "example@example.com", message: "Hello, this is a test message!")
     }
     

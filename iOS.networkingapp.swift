@@ -10,6 +10,8 @@ class ViewController: UIViewController {
 
         // Call the calculateSum function
         calculateSum(num1: 5, num2: 10)
+
+        sendMessage(recipient: "example@example.com", message: "Hello, this is a test message!")
     }
     
     func calculateSum(num1: Int, num2: Int) {

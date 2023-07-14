@@ -342,3 +342,13 @@ class ViewController: UIViewController {
     func sendMessage(recipient: String, message: String) {
     // Prepare the message
     let messageObject = Message(recipient: recipient, content: message)
+    // Send the message using a messaging service or API
+    MessagingService.send(message: messageObject) { result in
+        switch result {
+        case .success:
+            showAlert(title: "Message Sent", message: "Your message to \(recipient) was successfully sent.")
+        case .failure(let error):
+            showAlert(title: "Error", message: "Failed to send message. Error: \(error.localizedDescription)")
+        }
+    }
+}

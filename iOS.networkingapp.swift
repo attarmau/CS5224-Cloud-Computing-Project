@@ -11,6 +11,8 @@ class ViewController: UIViewController {
         calculateSum(num1: 5, num2: 10)
 
         sendMessage(recipient: "example@example.com", message: "Hello, this is a test message!")
+
+        changeBackgroundColor(color: .yellow) // Example usage of the new function
     }
 
     func calculateSum(num1: Int, num2: Int) {
@@ -78,5 +80,9 @@ class ViewController: UIViewController {
                 showAlert(title: "Error", message: "Failed to send message. Error: \(error.localizedDescription)")
             }
         }
+    }
+
+    func changeBackgroundColor(color: UIColor) {
+        view.backgroundColor = color
     }
 }

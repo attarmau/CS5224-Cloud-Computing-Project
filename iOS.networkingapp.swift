@@ -91,4 +91,13 @@ class ViewController: UIViewController {
     imageView.image = UIImage(named: "exampleImage") // Replace "exampleImage" with the name of your image asset
     imageView.contentMode = .scaleAspectFit
     view.addSubview(imageView)
+
+    func showCustomAlert(title: String, message: String, actions: [UIAlertAction]) {
+        let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        for action in actions {
+            alertController.addAction(action)
+        }
+
+        present(alertController, animated: true, completion: nil)
+    }
 }

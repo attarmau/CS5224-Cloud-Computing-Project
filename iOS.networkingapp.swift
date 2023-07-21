@@ -115,8 +115,14 @@ class ViewController: UIViewController {
             audioPlayer = try AVAudioPlayer(contentsOf: soundURL)
             audioPlayer?.prepareToPlay()
             audioPlayer?.play()
+            
         } catch {
             print("Error playing sound: \(error)")
-        }
+
+        func addImageView() {
+        let imageView = UIImageView(frame: CGRect(x: 50, y: 250, width: 200, height: 200))
+        imageView.image = UIImage(named: "exampleImage") // Replace "exampleImage" with the name of your image asset
+        imageView.contentMode = .scaleAspectFit
+        view.addSubview(imageView)
     }
 }

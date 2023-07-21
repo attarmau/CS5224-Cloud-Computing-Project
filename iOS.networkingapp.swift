@@ -15,6 +15,8 @@ class ViewController: UIViewController {
         sendMessage(recipient: "example@example.com", message: "Hello, this is a test message!")
 
         changeBackgroundColor(color: .yellow) // Example usage of the new function
+
+        addImageView() // Adding the new function to display an image
     }
 
     func calculateSum(num1: Int, num2: Int) {

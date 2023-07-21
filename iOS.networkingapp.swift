@@ -100,7 +100,8 @@ class ViewController: UIViewController {
 
         present(alertController, animated: true, completion: nil)
     }
-        func playSound() {
+    
+    func playSound() {
         guard let soundURL = Bundle.main.url(forResource: "sound", withExtension: "mp3") else {
             print("Sound file not found.")
             return

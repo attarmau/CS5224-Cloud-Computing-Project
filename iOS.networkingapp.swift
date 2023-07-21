@@ -2,6 +2,8 @@ import UIKit
 
 class ViewController: UIViewController {
 
+    var audioPlayer: AVAudioPlayer? // Added missing property
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         addLabel()

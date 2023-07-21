@@ -90,7 +90,7 @@ class ViewController: UIViewController {
         let imageView = UIImageView(frame: CGRect(x: 50, y: 250, width: 200, height: 200))
         imageView.image = UIImage(named: "exampleImage") // Replace "exampleImage" with the name of your image asset
         imageView.contentMode = .scaleAspectFit
-    view.addSubview(imageView)
+        view.addSubview(imageView)
 
     func showCustomAlert(title: String, message: String, actions: [UIAlertAction]) {
         let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)

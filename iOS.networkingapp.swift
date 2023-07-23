@@ -125,4 +125,46 @@ class ViewController: UIViewController {
         imageView.contentMode = .scaleAspectFit
         view.addSubview(imageView)
     }
+
+    func sendRequestToServer() {
+    guard let url = URL(string: "https://api.example.com/send_request") else {
+        print("Invalid URL")
+        return
+    }
+    
+    var request = URLRequest(url: url)
+    request.httpMethod = "POST"
+    request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+    
+    let requestBody = ["key1": "value1", "key2": "value2"] // Replace with your request body
+    
+    do {
+        let jsonData = try JSONSerialization.data(withJSONObject: requestBody, options: [])
+        request.httpBody = jsonData
+    } catch {
+        print("Error creating JSON data: \(error)")
+        return
+    }
+    
+    let session = URLSession.shared
+    let task = session.dataTask(with: request) { (data, response, error) in
+        if let error = error {
+            print("Error: \(error.localizedDescription)")
+            return
+        }
+        
+        if let data = data {
+            do {
+                let jsonResponse = try JSONSerialization.jsonObject(with: data, options: [])
+                print("Response: \(jsonResponse)")
+                
+                // Handle the server response as needed
+                
+            } catch {
+                print("Error parsing response data: \(error)")
+            }
+        }
+    }
+    
+    task.resume()
 }

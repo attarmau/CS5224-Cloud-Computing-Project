@@ -171,3 +171,14 @@ class ViewController: UIViewController {
             print("Sound file not found.")
             return
         }
+        
+        do {
+            audioPlayer = try AVAudioPlayer(contentsOf: soundURL)
+            audioPlayer?.prepareToPlay()
+            audioPlayer?.play()
+        } catch {
+            print("Error playing sound: \(error)")
+        }
+    }
+    task.resume()
+}

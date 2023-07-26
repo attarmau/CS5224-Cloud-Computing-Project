@@ -126,18 +126,18 @@ class ViewController: UIViewController {
         view.addSubview(imageView)
     }
 
-    func sendRequestToServer() {
-        guard let url = URL(string: "https://api.example.com/send_request") else {
-            print("Invalid URL")
-            return
-        }
-    
+   func sendRequestToServer() {
+    guard let url = URL(string: "https://api.example.com/send_request") else {
+        print("Invalid URL")
+        return
+    }
+
     var request = URLRequest(url: url)
     request.httpMethod = "POST"
     request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-    
+
     let requestBody = ["key1": "value1", "key2": "value2"] // Replace with your request body
-    
+
     do {
         let jsonData = try JSONSerialization.data(withJSONObject: requestBody, options: [])
         request.httpBody = jsonData
@@ -145,40 +145,41 @@ class ViewController: UIViewController {
         print("Error creating JSON data: \(error)")
         return
     }
-    
+
     let session = URLSession.shared
     let task = session.dataTask(with: request) { (data, response, error) in
         if let error = error {
             print("Error: \(error.localizedDescription)")
             return
         }
-        
+
         if let data = data {
             do {
                 let jsonResponse = try JSONSerialization.jsonObject(with: data, options: [])
                 print("Response: \(jsonResponse)")
-                
+
                 // Handle the server response as needed
-                
+
             } catch {
                 print("Error parsing response data: \(error)")
             }
         }
     }
 
-    func playSound() {
-        guard let soundURL = Bundle.main.url(forResource: "sound", withExtension: "mp3") else {
-            print("Sound file not found.")
-            return
-        }
-        
-        do {
-            audioPlayer = try AVAudioPlayer(contentsOf: soundURL)
-            audioPlayer?.prepareToPlay()
-            audioPlayer?.play()
-        } catch {
-            print("Error playing sound: \(error)")
-        }
-    }
     task.resume()
+}
+
+func playSound() {
+    guard let soundURL = Bundle.main.url(forResource: "sound", withExtension: "mp3") else {
+        print("Sound file not found.")
+        return
+    }
+
+    do {
+        audioPlayer = try AVAudioPlayer(contentsOf: soundURL)
+        audioPlayer?.prepareToPlay()
+        audioPlayer?.play()
+    } catch {
+        print("Error playing sound: \(error)")
+    }
 }

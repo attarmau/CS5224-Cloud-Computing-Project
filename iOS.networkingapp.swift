@@ -165,6 +165,9 @@ class ViewController: UIViewController {
             }
         }
     }
-    
-    task.resume()
-}
+
+    func playSound() {
+        guard let soundURL = Bundle.main.url(forResource: "sound", withExtension: "mp3") else {
+            print("Sound file not found.")
+            return
+        }

@@ -127,10 +127,10 @@ class ViewController: UIViewController {
     }
 
     func sendRequestToServer() {
-    guard let url = URL(string: "https://api.example.com/send_request") else {
-        print("Invalid URL")
-        return
-    }
+        guard let url = URL(string: "https://api.example.com/send_request") else {
+            print("Invalid URL")
+            return
+        }
     
     var request = URLRequest(url: url)
     request.httpMethod = "POST"

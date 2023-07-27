@@ -165,10 +165,8 @@ class ViewController: UIViewController {
                 print("Error parsing response data: \(error)")
             }
         }
+    task.resume()                                           
     }
-
-    task.resume()
-}
 
     func playSound() {
         guard let soundURL = Bundle.main.url(forResource: "sound", withExtension: "mp3") else {

@@ -17,9 +17,9 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
 
         changeBackgroundColor(color: .yellow) // Example usage of the new function
 
-        addImageView() // Adding the new function to display an image
+        addImageView() # Adding the new function to display an image
 
-        // Call the new function to capture an image from the camera
+        # Call the new function to capture an image from the camera
         captureImageFromCamera()
     }
 

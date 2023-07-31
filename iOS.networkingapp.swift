@@ -185,7 +185,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         print("Error playing sound: \(error)")
     }
     
-        // Function to capture an image using the device's camera
+    # Function to capture an image using the device's camera
     func captureImageFromCamera() {
         let imagePicker = UIImagePickerController()
         imagePicker.delegate = self
@@ -193,7 +193,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         present(imagePicker, animated: true, completion: nil)
     }
 
-    // Function to handle the captured image and display it in an image view
+    # Function to handle the captured image and display it in an image view
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         if let image = info[.originalImage] as? UIImage {
             let imageView = UIImageView(frame: CGRect(x: 50, y: 250, width: 200, height: 200))
@@ -204,7 +204,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         picker.dismiss(animated: true, completion: nil)
     }
 
-    // Function to handle image picker cancellation
+    # Function to handle image picker cancellation
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         picker.dismiss(animated: true, completion: nil)
     }

@@ -193,15 +193,4 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         imagePicker.sourceType = .camera
         present(imagePicker, animated: true, completion: nil)
     }
-
-    # Function to handle the captured image and display it in an image view
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        if let image = info[.originalImage] as? UIImage {
-            let imageView = UIImageView(frame: CGRect(x: 50, y: 250, width: 200, height: 200))
-            imageView.image = image
-            imageView.contentMode = .scaleAspectFit
-            view.addSubview(imageView)
-        }
-        picker.dismiss(animated: true, completion: nil)
-    }
 }

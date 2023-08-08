@@ -1,7 +1,6 @@
 import UIKit
 import AVFoundation
 
-
 class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
 
     var audioPlayer: AVAudioPlayer? // Added missing property
@@ -184,13 +183,5 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         audioPlayer?.play()
     } catch {
         print("Error playing sound: \(error)")
-    }
-    
-    # Function to capture an image using the device's camera
-    func captureImageFromCamera() {
-        let imagePicker = UIImagePickerController()
-        imagePicker.delegate = self
-        imagePicker.sourceType = .camera
-        present(imagePicker, animated: true, completion: nil)
     }
 }

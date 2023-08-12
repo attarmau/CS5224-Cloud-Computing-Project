@@ -1,5 +1,3 @@
-import UIKit
-import AVFoundation
 
 class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
 

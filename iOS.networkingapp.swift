@@ -170,18 +170,4 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         }
     task.resume()                                           
     }
-
-    func playSound() {
-        guard let soundURL = Bundle.main.url(forResource: "sound", withExtension: "mp3") else {
-        print("Sound file not found.")
-        return
-    }
-
-    do {
-        audioPlayer = try AVAudioPlayer(contentsOf: soundURL)
-        audioPlayer?.prepareToPlay()
-        audioPlayer?.play()
-    } catch {
-        print("Error playing sound: \(error)")
-    }
 }

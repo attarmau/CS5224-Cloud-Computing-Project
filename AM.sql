@@ -1,86 +1,11 @@
-# You are given a SELECT statement showing customer names and orders. Customer names can repeat for multiple orders. How can you change the query to return a list of customers who ordered at least once?
-SELECT DISTINCT customer_name
-FROM your_table_name
-WHERE customer_name IS NOT NULL;
+from azure.ai.ml.entities import Workspace
 
-# What can you add to your table definition to ensure that only records with a tolerance value within that range can be added to the table?
-CREATE TABLE your_table_name (
-  -- other column definitions
-  
-  tolerance_level DECIMAL(3, 1) CHECK (tolerance_level >= 2.0 AND tolerance_level <= 5.1),
-  
-  -- other column definitions
-);
+workspace_name = "enter"
 
-# Increase order; decrease order
-CREATE VIEW your_view_name AS
-SELECT email_address, first_name, last_name, rank
-FROM your_table_name
-ORDER BY rank ASC, last_name DESC, first_name DESC;
-
-# Behave more like a keyword search for phrases
-## The LIKE operator is used in the WHERE clause to perform pattern matching. The percent sign (%) is a wildcard that matches any sequence of characters.
-SELECT * FROM data_table WHERE search_term LIKE '%<user_input>%';
-
-# Write a SQL query to get the average review ratings for every product every month
-SELECT
-  EXTRACT(MONTH FROM submit_date) as mth,
-  product_id,
-  ROUND(AVG(stars),2) AS avg_stars
-FROM reviews
-GROUP BY EXTRACT(MONTH FROM submit_date), product_id
-ORDER BY mth, product_id;
-
--- Table: customers
-CREATE TABLE customers (
-    customer_id INT PRIMARY KEY,
-    first_name VARCHAR(50),
-    last_name VARCHAR(50),
-    email VARCHAR(100),
-    address VARCHAR(200)
-);
-
--- Table: products
-CREATE TABLE products (
-    product_id INT PRIMARY KEY,
-    product_name VARCHAR(100),
-    price DECIMAL(10, 2),
-    description VARCHAR(500)
-);
-
--- Table: orders
-CREATE TABLE orders (
-    order_id INT PRIMARY KEY,
-    customer_id INT,
-    product_id INT,
-    quantity INT,
-    order_date DATE,
-    FOREIGN KEY (customer_id) REFERENCES customers(customer_id),
-    FOREIGN KEY (product_id) REFERENCES products(product_id)
-);
-
-# Creating a Table
-CREATE TABLE customers (
-    id INT,
-    name VARCHAR(50),
-    email VARCHAR(100)
-);
-
-#  retrieve a list of employees with their corresponding department names
-SELECT e.name, d.department_name
-FROM employees e
-JOIN departments d ON e.department_id = d.department_id;
-
-# count the number of employees in the "Sales" department:
-SELECT COUNT(*)
-FROM employees
-WHERE department = 'Sales';
-
-# Write a SQL query to retrieve the total number of orders, total sales amount, and average sales amount for each customer residing in the city of "New York". 
-# Sort the results in descending order based on the total sales amount.
-SELECT c.FirstName, c.LastName, COUNT(o.OrderID) AS TotalOrders, SUM(o.TotalAmount) AS TotalSalesAmount, AVG(o.TotalAmount) AS AverageSalesAmount
-FROM Customers c
-INNER JOIN Orders o ON c.CustomerID = o.CustomerID
-WHERE c.City = 'New York'
-GROUP BY c.CustomerID, c.FirstName, c.LastName
-ORDER BY TotalSalesAmount DESC;
+ws_basic = Workspace(
+    name=workspace_name,
+    location="enter",
+    display_name="Basic workspace-example",
+    description="This example shows how to create a basic workspace",
+)
+ml_client.workspaces.begin_create(ws_basic)

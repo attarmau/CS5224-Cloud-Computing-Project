@@ -1,0 +1,6 @@
+env = create_environment()
+state = env.get_initial_state()
+for i in range(n_iterations):
+  action = choose_action(state)
+  state, reward = env.excute(action)
+  update_knowledge(state, action, reward)

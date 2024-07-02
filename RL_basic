@@ -4,3 +4,12 @@ for i in range(n_iterations):
   action = choose_action(state)
   state, reward = env.excute(action)
   update_knowledge(state, action, reward)
+
+
+exp_rewards_strategy_1 = np.array([3, 2, -1, 5])
+discount_factor = 0.9
+# Compute discounts
+discounts_strategy_1 = np.array([discount_factor ** i for i in range(len(exp_rewards_strategy_1))])
+# Compute the discounted return
+discounted_return_strategy_1 = np.sum(exp_rewards_strategy_1 * discounts_strategy_1)
+print(f"The discounted return of the first strategy is {discounted_return_strategy_1}")

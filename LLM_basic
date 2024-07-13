@@ -1,3 +1,4 @@
+## Colab Code: https://colab.research.google.com/drive/1lNmosqwl20MoRxnpi2xG9qsmopLiVoBx#scrollTo=t2zbAOJSzspp 
 from transformers import AutoModelForCausalLM, AutoTokenizer
 import torch
 

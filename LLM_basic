@@ -10,3 +10,19 @@ _new_max_tokens = 32 if not torch.cuda.is_available() else 128
 #   if torch.backends.mps.is_built():
 #       device = "mpu"
 
+model_name = "Qwen/Qwen1.5-0.5B"
+# if you want a higher degree of challenge, use the following models:
+# model_name = "gpt2"
+# model_name = "gpt2-medium"
+
+model = AutoModelForCausalLM.from_pretrained(model_name, torch_dtype="auto").to(device)
+tokenizer = AutoTokenizer.from_pretrained(model_name)
+
+def complete(primer, max_new_tokens=_new_max_tokens):
+  inputs = tokenizer(primer, return_tensors="pt").to(device)
+
+  outputs = model.generate(**inputs, max_new_tokens=max_new_tokens, pad_token_id=tokenizer.eos_token_id)
+
+  generated_ids = outputs[0][len(inputs.input_ids[0]):]
+
+  return primer, tokenizer.decode(generated_ids, skip_special_tokens=True)

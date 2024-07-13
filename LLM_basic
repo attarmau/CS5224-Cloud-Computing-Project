@@ -51,3 +51,11 @@ try:
     print("START >>\n\n", primer, sep="")
     print()
     print("COMPLETION >>\n\n", completion, sep="")
+
+## Summarise the task for LLM
+1. Complete the sentence
+2. Summarise the sentence
+3. Code-writing 
+4. Showcase the poetic skills
+5. Answer a question based on the passage
+6. Come up with a product name

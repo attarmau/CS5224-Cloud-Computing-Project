@@ -27,7 +27,7 @@ def complete(primer, max_new_tokens=_new_max_tokens):
 
   return primer, tokenizer.decode(generated_ids, skip_special_tokens=True)
 
-# Complete the sentence (basic function in LLM)
+## Complete the sentence (basic function in LLM)
 prompt = "Once upon a time, in a quiet village, a young girl discovered a hidden world in her backyard. She was exploring the dense bushes when she stumbled upon a"
 
 primer, completion = complete(prompt)
@@ -35,3 +35,19 @@ primer, completion = complete(prompt)
 print("START >>\n\n", primer, sep="")
 print()
 print("COMPLETION >>\n\n", completion, sep="")
+
+## Prompt for summarization
+prompt = \
+f"""Please summarize the following text:
+
+{text_to_summarize}
+
+In summary, the key points are:
+"""
+
+try:
+    primer, completion = complete(prompt)
+
+    print("START >>\n\n", primer, sep="")
+    print()
+    print("COMPLETION >>\n\n", completion, sep="")

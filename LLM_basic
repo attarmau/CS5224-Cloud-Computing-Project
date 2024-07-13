@@ -1,0 +1,12 @@
+from transformers import AutoModelForCausalLM, AutoTokenizer
+import torch
+
+device = "cuda" if torch.cuda.is_available() else "cpu"
+
+_new_max_tokens = 32 if not torch.cuda.is_available() else 128
+
+# If you are using Apple M1, M2, M3 on your local machine
+# if not torch.cuda.is_available() and torch.backends.mps.is_available():
+#   if torch.backends.mps.is_built():
+#       device = "mpu"
+

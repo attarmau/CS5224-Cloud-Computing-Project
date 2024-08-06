@@ -34,3 +34,14 @@ plt.show()                                                        # Display the 
 ## Looking at raw texts
 print('\033[92m' + all_positive_tweets[random.randint(0,5000)])   # print positive in greeen
 print('\033[91m' + all_negative_tweets[random.randint(0,5000)])   # print negative in red
+
+## Preprocess raw text for Sentiment analysis
+Data preprocessing is one of the critical steps in any machine learning project. It includes cleaning and formatting the data before feeding into a machine learning algorithm. For NLP, the preprocessing steps are comprised of the following tasks:
+-Tokenizing the string
+-Lowercasing
+-Removing stop words and punctuation
+-Stemming
+
+# Our selected sample. Complex enough to exemplify each step
+tweet = all_positive_tweets[2277]
+print(tweet)

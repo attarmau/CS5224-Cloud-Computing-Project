@@ -30,3 +30,7 @@ plt.pie(sizes, labels=labels, autopct='%1.1f%%',
 
 plt.axis('equal')                                                 # Equal aspect ratio ensures that pie is drawn as a circle.
 plt.show()                                                        # Display the chart
+
+## Looking at raw texts
+print('\033[92m' + all_positive_tweets[random.randint(0,5000)])   # print positive in greeen
+print('\033[91m' + all_negative_tweets[random.randint(0,5000)])   # print negative in red

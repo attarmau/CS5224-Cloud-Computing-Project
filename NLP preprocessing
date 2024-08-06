@@ -45,3 +45,10 @@ Data preprocessing is one of the critical steps in any machine learning project.
 # Our selected sample. Complex enough to exemplify each step
 tweet = all_positive_tweets[2277]
 print(tweet)
+
+nltk.download('stopwords')                 # download the stopwords from NLTK
+import re                                  # library for regular expression operations
+import string                              # for string operations
+from nltk.corpus import stopwords          # module for stop words that come with NLTK
+from nltk.stem import PorterStemmer        # module for stemming
+from nltk.tokenize import TweetTokenizer   # module for tokenizing strings

@@ -89,3 +89,51 @@ print(stopwords_english)
 
 print('\nPunctuation\n')
 print(string.punctuation)
+
+We can see that the stop words list above contains some words that could be important in some contexts. 
+These could be words like i, not, between, because, won, against. You might need to customize the stop words list for some applications. For our exercise, we will use the entire list.
+For the punctuation, we saw earlier that certain groupings like ':)' and '...' should be retained when dealing with tweets because they are used to express emotions. 
+In other contexts, like medical analysis, these should also be removed.
+Time to clean up our tokenized tweet!
+
+print()
+print('\033[92m')
+print(tweet_tokens)
+print('\033[94m')
+
+tweets_clean = []
+
+for word in tweet_tokens: # Go through every word in your tokens list
+    if (word not in stopwords_english and  # remove stopwords
+        word not in string.punctuation):  # remove punctuation
+        tweets_clean.append(word)
+
+print('removed stop words and punctuation:')
+print(tweets_clean)
+
+## Stemming
+Stemming is the process of converting a word to its most general form, or stem. This helps in reducing the size of our vocabulary. Consider the words:
+-learn
+-learning
+-learned
+-learnt
+
+print()
+print('\033[92m')
+print(tweets_clean)
+print('\033[94m')
+
+# Instantiate stemming class
+stemmer = PorterStemmer() 
+
+# Create an empty list to store the stems
+tweets_stem = [] 
+
+for word in tweets_clean:
+    stem_word = stemmer.stem(word)  # stemming word
+    tweets_stem.append(stem_word)  # append to the list
+
+print('stemmed words:')
+print(tweets_stem)
+
+## process_tweet()

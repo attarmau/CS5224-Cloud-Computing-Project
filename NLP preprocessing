@@ -80,3 +80,12 @@ tweet_tokens = tokenizer.tokenize(tweet2)
 print()
 print('Tokenized string:')
 print(tweet_tokens)
+
+## Remove stop words and punctuations
+# Import the english stop words list from NLTK
+stopwords_english = stopwords.words('english') 
+print('Stop words\n')
+print(stopwords_english)
+
+print('\nPunctuation\n')
+print(string.punctuation)

@@ -8,6 +8,9 @@ import random                              # pseudo-random number generator
 # downloads sample twitter dataset.
 nltk.download('twitter_samples')
 
+# We can load the text fields of the positive and negative tweets by using the module's strings() method like this:
 # select the set of positive and negative tweets
 all_positive_tweets = twitter_samples.strings('positive_tweets.json')
 all_negative_tweets = twitter_samples.strings('negative_tweets.json')
+
+# Next, we'll print a report with the number of positive and negative tweets. It is also essential to know the data structure of the datasets

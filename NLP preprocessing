@@ -137,3 +137,22 @@ print('stemmed words:')
 print(tweets_stem)
 
 ## process_tweet()
+As shown above, preprocessing consists of multiple steps before you arrive at the final list of words. You will use the function process_tweet(tweet) available in utils.py. 
+Open the file and see that this function's implementation is very similar to the steps above.
+To obtain the same result as in the previous code cells, you will only need to call the function process_tweet(). Let's do that in the next cell.
+
+from utils import process_tweet # Import the process_tweet function
+
+# choose the same tweet
+tweet = all_positive_tweets[2277]
+
+print()
+print('\033[92m')
+print(tweet)
+print('\033[94m')
+
+# call the imported function
+tweets_stem = process_tweet(tweet); # Preprocess a given tweet
+
+print('preprocessed tweet:')
+print(tweets_stem) # Print the result

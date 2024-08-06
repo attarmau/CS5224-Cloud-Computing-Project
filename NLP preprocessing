@@ -64,3 +64,19 @@ tweet2 = re.sub(r'^RT[\s]+', '', tweet)             # remove old style retweet t
 tweet2 = re.sub(r'https?://[^\s\n\r]+', '', tweet2) # remove hyperlinks
 tweet2 = re.sub(r'#', '', tweet2) # remove hashtags # only removing the hash # sign from the word
 print(tweet2)
+
+## Tokenize the string
+To tokenize means to split the strings into individual words without blanks or tabs. In this same step, we will also convert each word in the string to lower case. 
+The tokenize module from NLTK allows us to do these easily:
+
+print()
+print('\033[92m' + tweet2)
+print('\033[94m')
+# instantiate tokenizer class
+tokenizer = TweetTokenizer(preserve_case=False, strip_handles=True,
+                               reduce_len=True)
+# tokenize tweets
+tweet_tokens = tokenizer.tokenize(tweet2)
+print()
+print('Tokenized string:')
+print(tweet_tokens)

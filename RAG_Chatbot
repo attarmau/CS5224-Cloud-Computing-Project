@@ -1,1 +1,266 @@
+# Importing necessary libraries for file handling, data manipulation, and numerical operations.
+import os, json
+import pandas as pd
+import numpy as np
 
+# These imports are from the Langchain library, which facilitates building conversational AI applications.
+# They are used to handle embeddings, document retrieval, and QA chains with conversational AI models.
+from langchain_mistralai import ChatMistralAI
+from langchain_community.embeddings import SentenceTransformerEmbeddings
+from langchain_chroma import Chroma
+from langchain.chains import RetrievalQA
+from langchain.schema.document import Document
+from langchain_core.prompts import PromptTemplate
+from langchain_core.output_parsers import StrOutputParser
+
+# Suppressing warnings for cleaner output, typically used in production or presentation settings.
+import warnings
+from sentence_transformers import SentenceTransformer
+warnings.filterwarnings('ignore', category=UserWarning)
+
+debug=False
+model = SentenceTransformer("thenlper/gte-large")
+
+if debug == True:
+    # Documentation at https://huggingface.co/thenlper/gte-large
+    # embedding_function = SentenceTransformerEmbeddings(model_name="../embedding_model/thenlper_gte-large/")
+    embedding_function = SentenceTransformerEmbeddings(model_name=model)
+    from dotenv import load_dotenv
+    load_dotenv(dotenv_path='../.env') 
+    # Run `uvicorn main:app --reload` in console for local testing
+else:
+    # Push Mistralai API key in environmenet variables during production 
+    # embedding_function = SentenceTransformerEmbeddings(model_name="./embedding_model/thenlper_gte-large/")
+    embedding_function = SentenceTransformerEmbeddings(model_name="thenlper/gte-large")
+
+# For HuggingFace Inference Endpoint
+# llm_model = 'mistralai/Mixtral-8x7B-Instruct-v0.1'
+# llm = HuggingFaceEndpoint(
+#     repo_id=llm_model,
+#     temperature= 0.01
+# )
+
+# Load model. Currently using Open-Mixtral-8x7B. 
+# Mistral API key must be set in environment variables. <MISTRAL_API_KEY=xxxxxxxxxxxxxxxxxxxxxx>
+api_key = "uu7ZX31EzrZ08kwwcl5E6fewOG6uwnhA"
+llm_model = 'open-mixtral-8x7b'
+llm = ChatMistralAI(model=llm_model,
+                    api_key=api_key,
+                    temperature=0)
+
+
+def get_level1_response(query, db):
+    '''
+    Retrieves responses based on a query using a document retriever and QA chain.
+    '''
+
+    prompt = get_level1_prompt(query)
+    # Initializes a document retriever from the database with parameters set for similarity-based search and retrieves the top 5 similar documents.
+    retriever = db.as_retriever(search_type="similarity", search_kwargs={"k": 5})
+    # Sets up a QA chain with the large language model (llm) and configured retriever, specifying the type of QA chain and enabling the return of source documents.
+    qa_chain = RetrievalQA.from_chain_type(llm=llm,
+                                           chain_type="stuff",
+                                           retriever=retriever,
+                                           return_source_documents=True)
+
+    # Invokes the QA chain with the generated prompt, executing the model inference to fetch the response.
+    llm_response = qa_chain.invoke(prompt)
+    # Prints the primary result of the QA operation.
+    print('-------', llm_response['result'])
+
+    # Iterates through the source documents returned by the QA operation and prints their sources.
+    for response in llm_response['source_documents']:
+        print('----source ---', response.metadata['source'])
+    # Initializes an empty set to keep track of sources already seen to avoid duplicates.
+    seen_sources = set()
+    # Compiles a list of unique source documents by ensuring no duplicate sources are included.
+    source_documents = [
+        {'source': response.metadata['source']} for response in llm_response['source_documents']
+        if response.metadata['source'] not in seen_sources and not seen_sources.add(response.metadata['source'])
+    ]
+    # Returns the main response from the QA chain along with the unique list of source documents.
+    return llm_response['result'], source_documents
+
+
+def connect_db(persist_directory):
+    '''
+    Creates an instance of a Chroma vector database. This instance is configured to use a specific directory on disk
+    ('persist_directory') for storage and retrieval of vector data. The 'embedding_function' specifies the method used
+    to convert text data into vector embeddings, which are crucial for similarity searches within the database.
+    '''
+    db = Chroma(persist_directory=persist_directory, embedding_function=embedding_function)
+
+    return db
+
+survey_tables = pd.read_csv("../tables.csv")
+online_questions = pd.read_csv("../online_question_options.csv")
+online_results = pd.read_csv("../online_results.csv")
+field1_questions = pd.read_csv('../field1_question_options.csv')
+field1_results = pd.read_csv("../field1_results.csv")
+
+field2_questions = pd.read_csv('../field2_question_options.csv')
+field2_results = pd.read_csv("../field2_results.csv", low_memory=False)
+
+# print(len(field2_results.columns), len(list(field2_questions['tag'].values)))
+# list1 = list(field2_results.columns.values)
+# list2 = (list(field2_questions['tag'].values))
+# print([i for i in list2 if i not in list1])
+
+field1_results.columns = list(field1_questions['question'].values)
+field2_results.columns = list(field2_questions['question'].values)
+online_results.columns = list(online_questions['question'].values)
+
+field1_results = field1_results.sample(5)
+field2_results = field2_results.sample(5)
+online_results = online_results.sample(5)
+
+field1_results = field1_results.iloc[:, :10]
+field2_results = field2_results.iloc[:, :10]
+online_results = online_results.iloc[:, :10]
+
+
+def get_json_results(conn):
+    '''
+    Executes SQL queries to fetch data and preprocess it for further usage.
+    '''
+    # Creates a database cursor to execute SQL commands.
+    survey_list = [survey_tables, field1_questions, field1_results,  online_questions, online_results]
+    table_list = ['survey_tables',  'field1_results',  'online_results']
+
+    # cursor = conn.cursor()
+    # Executes a SQL command to fetch names of all base tables from the information schema of the database.
+    # cursor.execute("SELECT table_name FROM information_schema.tables WHERE table_type = 'BASE TABLE'")
+    # tables = cursor.fetchall() # Retrieves all rows of the query result, each row being a table name.
+    # query_table = 'survey_tables'
+    # #data = cursor.execute(f"SELECT * FROM {query_table}")
+    # # tables = cursor.fetchall()
+    # query = (f'SELECT * FROM {query_table}')
+    # data = pd.read_sql_query(query, conn)
+
+    result_json = {}  # Initializes an empty dictionary to store processed table data keyed by table names.
+    for i in range(len(table_list)):
+        # print(f'Reading table: {table}')
+        # query = (f'SELECT * FROM {table}')
+        # data = pd.read_sql_query(query, conn)
+
+        # filtered_dict = data.to_dict('index')
+        # Stores the processed dictionary in the result_json using the table name as the key.
+        print(survey_list[i])
+        filtered_dict = survey_list[i].to_dict('index')
+        result_json[table_list[i]] = filtered_dict
+
+    # Cleans the result_json to remove any empty or null values recursively.
+    # clean_dict(result_json)
+    print('-----result_json-------', result_json)
+    return result_json  # Returns the cleaned and structured JSON object containing the person-specific data.
+
+
+# Converts result JSON into a vector database format for embedding-based searches.
+def create_vectors_db(result_json, persist_directory):
+    '''
+    Creates a list of Document objects. Each Document is initialized with content from the JSON and its source key.
+    The page_content of each Document is a stringified version of the JSON value associated with each key,
+    and the metadata includes the source of the JSON entry.
+    '''
+    documents = [Document(page_content=json.dumps(result_json[k]), metadata={"source": k}) for k, v in result_json.items()]
+
+    # Initializes a Chroma vector database with the list of documents.
+    # The 'embedding_function' is used to convert text data into vector embeddings.
+    # The 'persist_directory' specifies where the database files will be stored on disk.
+    db = Chroma.from_documents(documents=documents,
+                                embedding=embedding_function,
+                                persist_directory=persist_directory)
+    # Returns the initialized vector database, which is now ready to be used for retrieval operations.
+    return db
+
+
+def get_json_results_org(conn, survey_level):
+    '''
+    Executes SQL queries to fetch data and preprocess it for further usage.
+    '''
+    # Creates a database cursor to execute SQL commands.
+    table_list = ['survey_tables', 'field_results', 'online_results']
+    # cursor = conn.cursor()
+    # Executes a SQL command to fetch names of all base tables from the information schema of the database.
+    # cursor.execute("SELECT table_name FROM information_schema.tables WHERE table_type = 'BASE TABLE'")
+    # tables = cursor.fetchall() # Retrieves all rows of the query result, each row being a table name.
+    # query_table = 'survey_tables'
+    # #data = cursor.execute(f"SELECT * FROM {query_table}")
+    # # tables = cursor.fetchall()
+    # query = (f'SELECT * FROM {query_table}')
+    # data = pd.read_sql_query(query, conn)
+    # print('----tables---\n', (data))
+    
+    result_json = {} # Initializes an empty dictionary to store processed table data keyed by table names.
+    for table in table_list:
+        print(f'Reading table: {table}')
+        query = (f'SELECT * FROM {table}')
+        data = pd.read_sql_query(query, conn)
+
+        filtered_dict = data.to_dict('index')
+        # Stores the processed dictionary in the result_json using the table name as the key.
+        result_json[table] = filtered_dict
+
+    # Cleans the result_json to remove any empty or null values recursively.
+    # clean_dict(result_json)
+    print(result_json)
+    return result_json # Returns the cleaned and structured JSON object containing the person-specific data.
+
+
+def routed_response(query, db):
+    '''
+    Routes the incoming query to the appropriate response handler based on its content.
+    '''
+    result = routing_agent(query)
+    print('Routing result: ', result)
+    
+    llm_response = {
+        "response": None,
+        "sources": None
+    }
+
+    if "level 1" in result.lower():
+        response, sources = get_level1_response(query, db)
+            
+    llm_response = {
+        "response": response,
+        "sources": sources
+    }
+    return llm_response
+
+
+def routing_agent(query):
+    '''
+    Classifies the query to determine the appropriate response handler.
+    '''
+    prompt = PromptTemplate.from_template("""Given the user query below, perform a classification task.
+    If the query is about the questions about a topic or keywords, classify as 'Level 1'.
+    If the query is about the topic of a survey, classify as 'Level 1'.
+    If the query is about the frequency of a topic or keywords appears, classify as 'Level 1'.  
+    If the query is about the data or information of a topic or keywords appears, classify as 'Level 1'.                                                                    
+                                          
+    Do not respond with more than one word.
+    
+    <question>
+    {question}
+    </question>
+    
+    Classification:""")
+    # from langchain.chains import create_sql_query_chain
+    # chain = create_sql_query_chain(llm, custom_engine)
+    
+    chain = prompt | llm | StrOutputParser()
+    
+    return chain.invoke({"question": query})
+
+
+def get_level1_prompt(query):
+    prompt = f"""
+    You are a conversion copywriter, expert in decision making, persuasion, psychology, behavioral economics, marketing, sales, UX design, customer experience, branding, and conversion rate optimization. 
+    Pretend that you are also highly empathetic and understand how people think and what makes them tick. 
+    You can easily and expertly detect human behavior, thoughts, and needs based on language. 
+    As detailed and accurate as possible, respond to the following question:
+    
+    Question: {query}
+    Answer:"""
+    return prompt

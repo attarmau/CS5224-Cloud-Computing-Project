@@ -1,12 +1,16 @@
-# CS5224 Cloud Computing Project
+# CS5224 LLM Cloud Computing Project
 This project aims to provide a useful tool for AWS users to ensure that their security groups are properly configured and that no sensitive services are exposed to the public internet by scanning an Amazon Web Services (AWS) account for open security groups using Python and the AWS SDK (Boto3).
 
 Here are the steps that this tool could follow:
 
-1. Use Boto3 to authenticate with the AWS account and retrieve a list of security groups.
+1.Define OpenAPI schema for query action
 
-2. For each security group, check whether it has any open ports that are accessible from the public internet. An open port is a port that is configured to allow traffic from any IP address (0.0.0.0/0).
+2.Create Lambda to query database
 
-3. If any open ports are found, print a warning message to the console and provide instructions for how to close the security group.
+3.Build Lambda with Cargo Lambda
 
-4. Optionally, the tool could be extended to automatically close any open security groups it finds.
+4.Deploy Lambda with Cargo Lambda
+
+5.Add Lambda to agent action group
+
+6.Test agent orchestration and query action

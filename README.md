@@ -15,3 +15,7 @@ Here are the steps that this tool could follow:
 5.Add Lambda to agent action group
 
 6.Test agent orchestration and query action
+
+
+Why does running models locally with llamafile provide better performance?
+Avoiding latency delays from external calls

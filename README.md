@@ -24,3 +24,5 @@ Here are the steps that this tool could follow:
 Why does running models locally with llamafile provide better performance?
 Avoiding latency delays from external calls
 The tokenizer splits text into tokens, but encoding converts the tokens to numbers.
+
+![未命名绘图 drawio](https://github.com/user-attachments/assets/76b6f388-5dd3-4d20-a1a6-bfb16ab90fd9)

@@ -39,7 +39,7 @@ The updated pipeline introduces more granular cleaning steps and focuses on opti
 
 4. **Validation of Primary Diagnoses**:
    - Removed rows where only `sekunder` (secondary diagnosis) was present, resulting in the final dataset `merged_5.csv` with 18,037 rows.
-   - 
+     
 ![未命名绘图 drawio](https://github.com/user-attachments/assets/76b6f388-5dd3-4d20-a1a6-bfb16ab90fd9) 
 
 ---
@@ -64,7 +64,7 @@ The updated pipeline introduces more granular cleaning steps and focuses on opti
 ---
 
 ### Conclusion
-The updated pipeline represents a significant improvement over the initial workflow, emphasizing cleaner, more structured data for enhanced analysis and model training. The changes address earlier inefficiencies, enabling better preprocessing for healthcare-focused AI applications.
+The updated pipeline represents a significant improvement over the initial workflow, emphasizing cleaner, more structured data for enhanced analysis and model training. The changes address earlier inefficiencies, eliminate duplicate combined columns, and ensure a more streamlined and structured dataset for downstream tasks, ultimately enhancing the quality and reliability of the data preprocessing workflow, enabling better preprocessing for healthcare-focused AI applications.
 
 ---
 

@@ -18,7 +18,8 @@ The earlier pipeline followed these steps:
 4. **Sorting and Grouping**:
    - Sorted data by consultation date and grouped it by person ID for downstream EDA.
    
-![未命名绘图 drawio](https://github.com/user-attachments/assets/76b6f388-5dd3-4d20-a1a6-bfb16ab90fd9)
+<img width="853" alt="Screenshot 2024-10-01 at 10 01 12 AM 1" src="https://github.com/user-attachments/assets/a6b6705d-4ec3-4853-87b4-82c7d1719b98">
+
 ---
 
 ### Updated Workflow (Second Diagram)
@@ -38,6 +39,8 @@ The updated pipeline introduces more granular cleaning steps and focuses on opti
 
 4. **Validation of Primary Diagnoses**:
    - Removed rows where only `sekunder` (secondary diagnosis) was present, resulting in the final dataset `merged_5.csv` with 18,037 rows.
+   - 
+![未命名绘图 drawio](https://github.com/user-attachments/assets/76b6f388-5dd3-4d20-a1a6-bfb16ab90fd9) 
 
 ---
 
@@ -65,7 +68,7 @@ The updated pipeline represents a significant improvement over the initial workf
 
 ---
 
-<img width="853" alt="Screenshot 2024-10-01 at 10 01 12 AM 1" src="https://github.com/user-attachments/assets/a6b6705d-4ec3-4853-87b4-82c7d1719b98">
+
 
 
 

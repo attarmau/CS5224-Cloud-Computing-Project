@@ -1003,3 +1003,11 @@ tanda_vital['tanda_vital_value'] = tanda_vital[vital_signs_columns].apply(
 tanda_vital = tanda_vital[['admission_id', 'person_id', 'tanda_vital_value']]
 tanda_vital = tanda_vital.drop_duplicates(subset=['admission_id', 'person_id'], keep='first')
 print(tanda_vital)
+
+combined_6['admission_id'] = combined_6['admission_id'].astype(str)
+combined_6['person_id'] = combined_6['person_id'].astype(str)
+tanda_vital['admission_id'] = tanda_vital['admission_id'].astype(str)
+tanda_vital['person_id'] = tanda_vital['person_id'].astype(str)
+
+combined_7 = combined_6.merge(tanda_vital, on=['admission_id', 'person_id'], how='left')
+combined_7 

@@ -749,3 +749,10 @@ for col in columns_to_clean:
 cleaned_anamnesa[columns_to_clean] = cleaned_anamnesa[columns_to_clean].fillna('')
 
 print(cleaned_anamnesa)
+
+combined_df['admission_id'] = combined_df['admission_id'].astype(str)
+combined_df['person_id'] = combined_df['person_id'].astype(str)
+cleaned_anamnesa['admission_id'] = cleaned_anamnesa['admission_id'].astype(str)
+cleaned_anamnesa['person_id'] = cleaned_anamnesa['person_id'].astype(str)
+
+add_ana_dia = combined_df.merge(cleaned_anamnesa, on=['admission_id', 'person_id'], how='inner')

@@ -1011,3 +1011,23 @@ tanda_vital['person_id'] = tanda_vital['person_id'].astype(str)
 
 combined_7 = combined_6.merge(tanda_vital, on=['admission_id', 'person_id'], how='left')
 combined_7 
+
+# allergy
+allergy_columns = [
+    'allergy', 'allergy_type', 'allergy_reaksi', 'allergy_keparahan', 
+    'allergy_efek', 'allergy_tanggal', 'ingredient_ids', 'drug_id', 'reaction'
+]
+
+def filter_and_transform_allergy_value(row):
+    return {
+        key.lower(): (value.upper() if isinstance(value, str) else value)
+        for key, value in row.to_dict().items() if pd.notna(value)
+    }
+
+allergy['allergy_value'] = allergy[allergy_columns].apply(filter_and_transform_allergy_value, axis=1)
+
+columns_to_keep = ['admission_id', 'person_id', 'allergy_value']
+allergy = allergy.filter(items=columns_to_keep)
+allergy = allergy.drop_duplicates(subset=['admission_id', 'person_id'], keep='first')
+allergy['allergy_value'] = allergy['allergy_value'].apply(lambda x: "" if x == {} else x)
+print(allergy)

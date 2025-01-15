@@ -756,3 +756,123 @@ cleaned_anamnesa['admission_id'] = cleaned_anamnesa['admission_id'].astype(str)
 cleaned_anamnesa['person_id'] = cleaned_anamnesa['person_id'].astype(str)
 
 add_ana_dia = combined_df.merge(cleaned_anamnesa, on=['admission_id', 'person_id'], how='inner')
+
+# Combine poli_name & poli_id
+different_poli_mask = (add_ana_dia['poli_name_x'].notnull()) & (add_ana_dia['poli_name_y'].notnull()) & (add_ana_dia['poli_name_x'] != add_ana_dia['poli_name_y'])
+different_poli_count = different_poli_mask.sum()
+
+if different_poli_count > 0:
+    message = "Some rows have different poli names"
+else:
+    message = "All poli names are the same or one of them is missing"
+
+print(message)
+print(f"Count of rows with different poli names: {different_poli_count}")
+
+different_poli_mask = (add_ana_dia['poli_name_x'].notnull()) & (add_ana_dia['poli_name_y'].notnull()) & (add_ana_dia['poli_name_x'] != add_ana_dia['poli_name_y'])
+different_poli_count = different_poli_mask.sum()
+add_ana_dia_cleaned = add_ana_dia[~different_poli_mask]
+print(f"Rows remaining after deletion: {len(add_ana_dia_cleaned)}")
+
+different_poli_mask = (add_ana_dia['poli_id_x'].notnull()) & (add_ana_dia['poli_id_y'].notnull()) & (add_ana_dia['poli_id_x'] != add_ana_dia['poli_id_y'])
+different_poli_count = different_poli_mask.sum()
+
+if different_poli_count > 0:
+    message = "Some rows have different poli ids"
+else:
+    message = "All poli ids are the same or one of them is missing"
+
+print(message)
+print(f"Count of rows with different poli ids: {different_poli_count}")
+
+different_poli_mask = (add_ana_dia['poli_id_x'].notnull()) & (add_ana_dia['poli_id_y'].notnull()) & (add_ana_dia['poli_id_x'] != add_ana_dia['poli_id_y'])
+different_poli_count = different_poli_mask.sum()
+add_ana_dia_cleaned = add_ana_dia[~different_poli_mask]
+print(f"Rows remaining after deletion: {len(add_ana_dia_cleaned)}")
+
+# Combine 'poli_name_x' & 'poli_name_y'
+add_ana_dia_cleaned['poli_name'] = add_ana_dia_cleaned.apply(
+    lambda row: row['poli_name_x'] if pd.notnull(row['poli_name_x']) else row['poli_name_y'],
+    axis=1
+)
+
+add_ana_dia_combined = add_ana_dia_cleaned.drop(columns=['poli_name_x', 'poli_name_y'])
+
+# Combine 'poli_id_x' & 'poli_name_y'
+add_ana_dia_combined['poli_id'] = add_ana_dia_combined.apply(
+    lambda row: row['poli_id_x'] if pd.notnull(row['poli_id_x']) else row['poli_id_y'],
+    axis=1
+)
+
+add_ana_dia_combined = add_ana_dia_combined.drop(columns=['poli_id_x', 'poli_id_y'])
+
+# Combining the other 5 files 
+# Columns to check for 'fisik_value'
+columns_to_check = [
+    ('kepala', 'kepala_detail'),
+    ('mata', 'mata_detail'),
+    ('telinga', 'telinga_detail'),
+    ('hidung', 'hidung_detail'),
+    ('tenggorokan', 'tenggorokan_detail'),
+    ('mulut', 'mulut_detail'),
+    ('leher', 'leher_detail'),
+    ('dada', 'dada_detail'),
+    ('jantung', 'jantung_detail'),
+    ('paru_paru', 'paru_paru_detail'),
+    ('genetelia_reproduksi', 'genetelia_reproduksi_detail'),
+    ('abdomen', 'abdomen_detail'),
+    ('kulit', 'kulit_detail'),
+    ('anus', 'anus_detail'),
+    ('urogenital', 'urogenital_detail'),
+    ('ekstremitas', 'ekstremitas_detail'),
+    ('muskuloskeletal', 'muskuloskeletal_detail'),
+    ('status_badan', 'status_badan_detail')
+]
+
+def create_fisik_value(row):
+    fisik_dict = {}
+    for organ, detail in columns_to_check:
+        organ_value = row[organ]
+        if organ_value == 99.0:
+            fisik_dict[organ] = row[detail]
+    return fisik_dict
+
+def clean_fisik_value(fisik_dict):
+    cleaned_dict = {}
+    for key, value in fisik_dict.items():
+        if value in ['', '{"99_0":""}']: 
+            cleaned_dict[key] = None  
+        elif isinstance(value, str) and value.startswith('{"99_0":'): 
+            try:
+                parsed_value = json.loads(value)
+                extracted_value = parsed_value.get("99_0", "")
+                if extracted_value:  
+                    cleaned_dict[key] = extracted_value
+                else: 
+                    cleaned_dict[key] = None
+            except json.JSONDecodeError:
+                cleaned_dict[key] = value  
+        else:
+            cleaned_dict[key] = value 
+
+    final_dict = {k: v for k, v in cleaned_dict.items() if v is not None}
+
+    for k, v in cleaned_dict.items():
+        if v is None: 
+            final_dict[k] = None
+
+    compact_dict = {k.lower(): (v.upper() if isinstance(v, str) else v) for k, v in final_dict.items()}
+    return compact_dict
+
+fisik['fisik_value'] = fisik.apply(create_fisik_value, axis=1)
+fisik = fisik[['admission_id', 'person_id', 'fisik_value']].drop_duplicates(subset=['admission_id', 'person_id'], keep='first')
+fisik['fisik_value'] = fisik['fisik_value'].apply(lambda x: clean_fisik_value(x) if x != {} else "")
+print(fisik)
+
+add_ana_dia_combined['admission_id'] = add_ana_dia_combined['admission_id'].astype(str)
+add_ana_dia_combined['person_id'] = add_ana_dia_combined['person_id'].astype(str)
+fisik['admission_id'] = fisik['admission_id'].astype(str)
+fisik['person_id'] = fisik['person_id'].astype(str)
+
+combined_4 = add_ana_dia_combined.merge(fisik, on=['admission_id', 'person_id'], how='left')
+combined_4

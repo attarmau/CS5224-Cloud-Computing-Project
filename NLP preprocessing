@@ -1031,3 +1031,11 @@ allergy = allergy.filter(items=columns_to_keep)
 allergy = allergy.drop_duplicates(subset=['admission_id', 'person_id'], keep='first')
 allergy['allergy_value'] = allergy['allergy_value'].apply(lambda x: "" if x == {} else x)
 print(allergy)
+
+combined_7['admission_id'] = combined_7['admission_id'].astype(str)
+combined_7['person_id'] = combined_7['person_id'].astype(str)
+allergy['admission_id'] = allergy['admission_id'].astype(str)
+allergy['person_id'] = allergy['person_id'].astype(str)
+
+combined_8 = combined_7.merge(allergy, on=['admission_id', 'person_id'], how='left')
+combined_8

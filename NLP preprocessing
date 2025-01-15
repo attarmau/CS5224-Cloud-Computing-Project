@@ -1039,3 +1039,15 @@ allergy['person_id'] = allergy['person_id'].astype(str)
 
 combined_8 = combined_7.merge(allergy, on=['admission_id', 'person_id'], how='left')
 combined_8
+
+# Filter Duplicate Primer Diagnosa
+duplicate_primer_ids = combined_8[
+    combined_8['diagnosa_type'] == 'primer'
+].groupby(['person_id', 'admission_id']).filter(lambda x: len(x) > 1)[['person_id', 'admission_id']].drop_duplicates()
+
+combined_8_filtered = combined_8.merge(
+    duplicate_primer_ids,
+    on=['person_id', 'admission_id'],
+    how='left',
+    indicator=True
+).query('_merge == "left_only"').drop(columns=['_merge'])

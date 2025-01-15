@@ -12,3 +12,71 @@ fisik_gigi = pd.read_csv('/Users/judyhuang/Desktop/rsmpm/ases_fisik_gigi.csv')
 fisik_mata = pd.read_csv('/Users/judyhuang/Desktop/rsmpm/ases_fisik_mata.csv')
 tanda_vital = pd.read_csv('/Users/judyhuang/Desktop/rsmpm/ases_tanda_vital.csv')
 allergy = pd.read_csv('/Users/judyhuang/Desktop/rsmpm/m_person_allergy.csv')
+
+specialization_mapping = {
+    'DR PRAPTI EKA WAHYUNING': 'NaN',
+    'DR TORIQ ARI PRAMBODO': 'NaN',
+    'DR RUDY GUNAWAN': 'NaN',
+    'DR ZAINUL FIKRI': 'NaN',
+    'DR RUDIYANTO SP.PD': 'NaN',
+    'DR YOEFAN FAISHAL ISLAM': 'NaN',
+    'DR MAHARANI TONTOWI': 'NaN',
+    'DR ABDUL HARIS SP.A': 'NaN',
+    'DR DIAN SARASWATI': 'Spesialis Anak',
+    'DR ALPHANI KURNIASARI SP.PD': 'NaN',
+    'DR SAMSURI SP.P': 'NaN',
+    'DR MOH NURKHOLIS ROUFI SP.BS': 'NaN',
+    'DR SURYO PRASETYO TRIBOWO': 'NaN',
+    'DR ABDUL MUDJIB': 'Spesialis Anak',
+    'DR WINDA AMELIA LESTARI': 'NaN',
+    'TIM SAKINAH': 'NaN',
+    'DR RUDYANTO': 'Spesialis Penyakit Dalam',
+    'DR DHANI TRI WAHYU SP.JP': 'NaN',
+    'DR DHANI TRI WAHYU': 'Spesialis Jantung dan Pembuluh Darah',
+    'DR RATNA DEWI SILALAHI': 'Spesialis Jantung dan Pembuluh Darah',
+    'RUDIYANTO': 'NaN',
+    'DR MOHAMAD ARY FIRMANTO': 'Spesialis Penyakit Dalam',
+    'DR RATNA ADELIA PRAVITASARI': 'Spesialis Penyakit Dalam',
+    'DR WIDHY PRAMONO': 'Spesialis Bedah',
+    'DR ZICO PARADIGMA': 'Spesialis Bedah',
+    'DR ZAINUL MUHTAROM': 'Spesialis Bedah',
+    'DR IDA KUSUMANINGRUM': 'Spesialis Obstetri & Ginekologi (Kebidanan dan Kandungan)',
+    'DR YULIANTO BASUKI': 'Spesialis Obstetri & Ginekologi (Kebidanan dan Kandungan)',
+    'DR FAIZAL RACHMAN': 'NaN',
+    'DR SOEPRIJANTOTRISNO PRIBADI': 'Spesialis Bedah Orthopaedi dan Traumatologi',
+    'DR BUDI SAMSUL FUAD': 'Spesialis Mata'
+}
+
+def clean_name(name):
+    if isinstance(name, str):
+        name = name.upper()
+        name = re.sub(r'SP\.\w+', '', name)
+        return name.strip()
+    return ''
+
+admission['encounter_with_name_cleaned'] = admission['encounter_with_name'].apply(clean_name)
+specialization_mapping_cleaned = {clean_name(key): value for key, value in specialization_mapping.items()}
+admission['doctor_sp'] = admission['encounter_with_name_cleaned'].map(specialization_mapping_cleaned)
+admission['doctor_sp'] = admission['doctor_sp'].replace('NaN', '')
+admission['sex'] = admission['sex'].replace({'L': 'female', 'P': 'male'})
+cleaned_admission = admission[~admission['sex'].isin(['', 'U'])]
+cleaned_admission['diagnosa_rm'] = cleaned_admission['diagnosa_rm'].astype(str).str.upper()
+
+cleaned_admission['tgl_lahir'] = pd.to_datetime(cleaned_admission['tgl_lahir'], errors='coerce')
+cleaned_admission = cleaned_admission.dropna(subset=['tgl_lahir'])
+current_date = datetime.now()
+cleaned_admission['age'] = cleaned_admission['tgl_lahir'].apply(
+    lambda dob: current_date.year - dob.year - ((current_date.month, current_date.day) < (dob.month, dob.day))
+)
+cleaned_admission = cleaned_admission[cleaned_admission['age'] > 0]
+
+cleaned_admission = cleaned_admission.fillna('')
+columns_to_keep = [
+    'admission_id', 'person_id', 'sex', 'age', 'diagnosa_awal', 'diagnosa_awal_desc',
+    'diagnosa_rm', 'diagnosa_primer', 'diagnosa_primer_desc', 'poli_id',
+    'encounter_with_id', 'encounter_with_name', 'encounter_change_id',
+    'encounter_change_name', 'jns_pelayanan_id', 'jns_pelayanan_name', 'poli_name', 'doctor_sp'
+]
+
+cleaned_admission = cleaned_admission[columns_to_keep]
+cleaned_admission

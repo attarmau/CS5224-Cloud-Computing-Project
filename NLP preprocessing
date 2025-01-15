@@ -80,3 +80,11 @@ columns_to_keep = [
 
 cleaned_admission = cleaned_admission[columns_to_keep]
 cleaned_admission
+
+# Check if 'diagnosa_rm' is empty (all values are NaN)
+is_diagnosa_rm_empty = cleaned_admission['diagnosa_rm'].isna().all()
+
+if is_diagnosa_rm_empty:
+    print("'diagnosa_rm' is an empty column.")
+else:
+    print("'diagnosa_rm' has values.")

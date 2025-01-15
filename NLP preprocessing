@@ -922,3 +922,11 @@ fisik_gigi = fisik_gigi[['admission_id', 'person_id', 'fisik_gigi_value']]
 fisik_gigi = fisik_gigi.drop_duplicates(subset=['admission_id', 'person_id'], keep='first')
 fisik_gigi['fisik_gigi_value'] = fisik_gigi['fisik_gigi_value'].apply(lambda x: "" if x == {} else x)
 print(fisik_gigi)
+
+combined_4['admission_id'] = combined_4['admission_id'].astype(str)
+combined_4['person_id'] = combined_4['person_id'].astype(str)
+fisik_gigi['admission_id'] = fisik_gigi['admission_id'].astype(str)
+fisik_gigi['person_id'] = fisik_gigi['person_id'].astype(str)
+
+combined_5 = combined_4.merge(fisik_gigi, on=['admission_id', 'person_id'], how='left')
+combined_5

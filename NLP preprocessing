@@ -729,3 +729,23 @@ def get_icd_codes(specialties):
     return list(set(icd10_codes)) if icd10_codes else "" 
 
 cleaned_anamnesa['icd10'] = cleaned_anamnesa['clinics_specialty'].apply(get_icd_codes)
+
+columns_to_clean = [
+    'main_complaint', 'other_complaint', 'current_disease_history', 'family_history',
+    'rwyt_penyakit_keluarga', 'previous_disease_history', 'medical_history'
+]
+
+empty_values = ['-', 'TIDAK', 'TIDAK ADA', None, '', 'nan', np.nan]
+
+def clean_column(value):
+    if isinstance(value, str):
+        value = value.strip().upper()  
+    return '' if value in empty_values or pd.isna(value) else value
+
+for col in columns_to_clean:
+    if col in cleaned_anamnesa.columns:
+        cleaned_anamnesa[col] = cleaned_anamnesa[col].apply(clean_column)
+
+cleaned_anamnesa[columns_to_clean] = cleaned_anamnesa[columns_to_clean].fillna('')
+
+print(cleaned_anamnesa)

@@ -88,3 +88,17 @@ if is_diagnosa_rm_empty:
     print("'diagnosa_rm' is an empty column.")
 else:
     print("'diagnosa_rm' has values.")
+
+# diagnosa
+diagnosa = diagnosa.dropna(subset=['person_id', 'rm_id','diagnosa'])[diagnosa['is_active'] == 1]
+columns_to_keep_diagnosa = [
+    'admission_id', 'person_id', 'episode_id', 'diagnosa', 'diagnosa_desc', 'diagnosa_type'
+]
+
+existing_columns_diagnosa = [col for col in columns_to_keep_diagnosa if col in diagnosa.columns]
+filtered_diagnosa = diagnosa[existing_columns_diagnosa]
+cleaned_diagnosa = filtered_diagnosa.dropna(subset=['admission_id', 'person_id', 'diagnosa', 'diagnosa_desc', 'diagnosa_type'])
+cleaned_diagnosa = cleaned_diagnosa.fillna('')
+cleaned_diagnosa = cleaned_diagnosa[~cleaned_diagnosa['diagnosa_type'].isin(['rehab medik', 'pasca bedah'])]
+
+cleaned_diagnosa

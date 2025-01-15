@@ -876,3 +876,49 @@ fisik['person_id'] = fisik['person_id'].astype(str)
 
 combined_4 = add_ana_dia_combined.merge(fisik, on=['admission_id', 'person_id'], how='left')
 combined_4
+
+#fisik_gigi
+columns_to_keep_gigi = [
+    'admission_id', 'person_id', 'odontogram', 'occulasi_id', 'tonus_palatinus_id',
+    'tonus_mandibularis_id', 'palatum_id', 'have_supernumerary_teeth', 
+    'supernumerary_teeth', 'have_diasterna', 'diasterna', 'have_gigi_anomali', 
+    'gigi_anomali', 'ket_cabut_gigi', 'lain_lain', 'calculus_positions', 
+    'stain_positions', 'caries_dentis', 'caries_dentis_lainnya', 
+    'gigi', 'gigi_lainnya', 'edentulous_area', 'edentulous_area_lainnya', 
+    'pemeriksaan_lainnya'
+]
+
+fisik_gigi = fisik_gigi.filter(items=columns_to_keep_gigi)
+gigi_columns = columns_to_keep_gigi[2:]
+
+def clean_data(d):
+    if isinstance(d, dict):
+        return {k.lower(): (clean_data(v).upper() if isinstance(v, str) else clean_data(v)) 
+                for k, v in d.items() if v != {} and v != [] and v is not None}
+    elif isinstance(d, list):
+        return [clean_data(v) for v in d if v != {} and v != [] and v is not None]
+    return d
+
+def parse_and_clean(json_str):
+    try:
+        data = json.loads(json_str)
+        return clean_data(data)
+    except (TypeError, json.JSONDecodeError):
+        return {}
+
+def apply_cleaning(row):
+    cleaned_row = {}
+    for col in gigi_columns:
+        cleaned_row[col] = parse_and_clean(row[col])
+    return cleaned_row
+
+fisik_gigi['fisik_gigi_value'] = fisik_gigi[gigi_columns].apply(apply_cleaning, axis=1)
+
+def remove_empty_dict_keys(row):
+    return {k: v for k, v in row.items() if v != {}}
+
+fisik_gigi['fisik_gigi_value'] = fisik_gigi['fisik_gigi_value'].apply(remove_empty_dict_keys)
+fisik_gigi = fisik_gigi[['admission_id', 'person_id', 'fisik_gigi_value']]
+fisik_gigi = fisik_gigi.drop_duplicates(subset=['admission_id', 'person_id'], keep='first')
+fisik_gigi['fisik_gigi_value'] = fisik_gigi['fisik_gigi_value'].apply(lambda x: "" if x == {} else x)
+print(fisik_gigi)

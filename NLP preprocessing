@@ -107,3 +107,188 @@ cleaned_diagnosa['admission_id'] = cleaned_diagnosa['admission_id'].astype(str)
 cleaned_admission['admission_id'] = cleaned_admission['admission_id'].astype(str)
 
 combined_df = cleaned_diagnosa.merge(cleaned_admission, on=['admission_id', 'person_id'], how='inner')
+
+# anamnesa
+
+anamnesa = anamnesa.dropna(subset=['person_id', 'rm_id','keluhan_utama'])[anamnesa['is_active'] == 1]
+
+columns_to_keep_anamnesa = [
+    'admission_id', 'person_id', 'poli_id', 'keluhan_utama', 'keluhan_lainnya',
+    'rwyt_penyakit_skrg', 'status_rwyt_penyakit_keluarga',
+    'rwyt_penyakit_keluarga', 'rwyt_penyakit_dulu', 'rwyt_pengobatan', 'poli_name'
+]
+
+existing_columns_anamnesa = [col for col in columns_to_keep_anamnesa if col in anamnesa.columns]
+filtered_anamnesa = anamnesa[existing_columns_anamnesa]
+filtered_anamnesa = filtered_anamnesa.dropna(subset=['admission_id', 'person_id'])
+cleaned_anamnesa = filtered_anamnesa.rename(columns={
+    'diagnosa': 'diagnosa_anamnesa',
+    'keluhan_utama': 'main_complaint',
+    'keluhan_lainnya': 'other_complaint',
+    'rwyt_penyakit_skrg': 'current_disease_history',
+    'rwyt_penyakit_dulu': 'previous_disease_history',
+    'status_rwyt_penyakit_keluarga': 'family_history',
+    'rwyt_pengobatan': 'medical_history'
+})
+
+family_history_dict = {
+    "1": "Hipertensi",
+    "2": "Penyakit Jantung",
+    "3": "Stroke",
+    "4": "TB Paru",
+    "5": "Diabetes Melitus",
+    "6": "Asma",
+    "7": "Lain-lain",
+    "8": "Tidak Ada"
+}
+
+def process_family_history(text):
+    if not isinstance(text, str) or not text:
+        return ""
+    lis = text.split(",")
+    temp = ['Tidak Ada' for _ in lis]
+    for i in range(len(lis)):
+        if lis[i] in family_history_dict:
+            temp[i] = family_history_dict[lis[i]]
+    return ', '.join(temp)
+
+cleaned_anamnesa['family_history'] = cleaned_anamnesa['family_history'].apply(process_family_history)
+
+def transform_and_uppercase(text):
+    if not isinstance(text, str):
+        return text
+    text = text.upper()
+    if 'HT' in text:
+        text = text.replace('HT', 'HIPERTENSI')
+    if 'DM' in text or 'DIABETES' in text:
+        text = text.replace('DM', 'DIABETES MELITUS').replace('DIABETES', 'DIABETES MELITUS')
+    if 'TEST' in text:
+        text = text.replace('TEST', '')
+    return text.strip()
+
+columns_to_transform = [
+    'main_complaint', 'other_complaint', 'current_disease_history', 
+    'family_history', 'previous_disease_history', 'medical_history'
+]
+
+for col in columns_to_transform:
+    if col in cleaned_anamnesa.columns:
+        cleaned_anamnesa[col] = cleaned_anamnesa[col].apply(transform_and_uppercase)
+
+cleaned_anamnesa = cleaned_anamnesa.drop_duplicates(subset=['admission_id', 'person_id'], keep='first')
+
+# mapping 
+clinics_to_specialty_mapping = {
+
+    "3175326": {
+        "9103": ["Obstetrics and Gynecology"],
+        "9104": ["Pediatrics"],
+        "9105": ["Internal Medicine", "Surgery", "Pathology"],
+        "9106": ["Dermatology", "Urology"],
+        "9107": ["Ophthalmology"],
+        "9109": ["Otolaryngology", "Internal Medicine"],
+        "9110": ["Internal Medicine"],
+        "9111": ["Pathology", "Pulmonology"],
+        "9112": ["Cardiology"],
+        "9113": ["Neurology", "Internal Medicine"],
+        "9114": ["Psychiatry"],
+        "9123": ["Rehabilitation/Physical Therapy"],
+        "9126": ["Urology"],
+        "9130": ["Urology"],
+        "9131": ["Orthopedics"],
+        "9151": ["Neurology"],
+        "9152": ["Obstetrics and Gynecology"],
+        "9153": ["Pediatrics"],
+        "9154": ["Internal Medicine"],
+        "9155": ["Cardiology"],
+        "9156": ["Pathology"],
+        "9157": ["Rehabilitation/Physical Therapy"],
+        "9158": ["Dermatology"],
+        "9161": ["Surgery"],
+        "9162": [],
+        "9166": ["Psychiatry"],
+        "9167": [],
+        "9168": ["Ophthalmology"],
+        "9169": ["Otolaryngology"],
+        "9170": ["Dentistry"],
+        "9171": ["Urology"],
+        "9172": ["Orthopedics"],
+        "IGD": [],
+        "ICU": []
+    },
+    "3210014": {
+        "IGD": [],
+        "HDL": ["Internal Medicine", "Nephrology"],
+        "BED": ["Surgery", "Internal Medicine"],
+        "JIW": ["Psychiatry"],
+        "MAT": ["Ophthalmology"],
+        "SAR": ["Neurology"],
+        "ANA": ["Pediatrics"],
+        "OBG": ["Obstetrics and Gynecology", "Internal Medicine"],
+        "BDM": ["Internal Medicine"],
+        "ICU": [],
+        "AKA": ["Internal Medicine"],
+        "INT": ["Orthopedics", "Internal Medicine"],
+        "TBD": ["Internal Medicine"],
+        "THT": ["Otolaryngology"],
+        "TLD": ["Internal Medicine"],
+        "ORT": ["Orthopedics"],
+        "TLA": ["Pediatrics"],
+        "KLT": ["Surgery", "Ophthalmology", "Pediatrics"],
+        "NICU": ["Pediatrics"],
+        "GIG": ["Dentistry"]
+    },
+    "3308022": {
+        "IGD": [],
+        "JAN": ["Rheumatology", "Cardiology"],
+        "URO": ["Urology"],
+        "ANA": ["Pediatrics"],
+        "PED": ["Internal Medicine"],
+        "PAR": ["Pathology", "Pulmonology"],
+        "JIW": ["Psychiatry"],
+        "OBG": ["Obstetrics and Gynecology"],
+        "ORT": ["Orthopedics"],
+        "UMU": [],
+        "BED": ["Surgery", "Anesthesiology"],
+        "DEV": ["Dermatology"],
+        "KGI": ["Dentistry"],
+        "nan": [],
+        "THT": ["Otolaryngology"],
+        "ICU": [],
+        "SYA": ["Neurology"],
+        "TBD": ["Pathology"],
+        "FLA": ["Rheumatology", "Internal Medicine"],
+        "NICU": ["Pediatrics"],
+        "GIG": ["Dentistry"],
+        "RHB": ["Rehabilitation/Physical Therapy"]
+    },
+    "3516062": {
+        "JAN": ["Rheumatology"],
+        "IGD": [],
+        "BED": ["Surgery"],
+        "ANA": ["Pediatrics"],
+        "OBG": ["Obstetrics and Gynecology"],
+        "MAT": ["Ophthalmology"],
+        "THT": ["Otolaryngology"],
+        "INT": ["Internal Medicine"],
+        "nan": [],
+        "BSY": ["Surgery"],
+        "PAR": ["Pathology", "Pulmonology"],
+        "SAR": ["Neurology"],
+        "ORT": ["Orthopedics"],
+        "URO": ["Urology"],
+        "GP1": ["Dentistry"],
+        "KLT": ["Dermatology"],
+        "JIW": ["Psychiatry"],
+        "IRM": ["Rehabilitation/Physical Therapy"],
+        "ICU": [],
+        "UMU": [],
+        "HDL": ["Internal Medicine", "Nephrology"],
+        "GND": ["Dentistry"],
+        "GIZ": [],
+        "ODC": ["Ophthalmology"]
+    }
+}
+
+flat_mapping = {key: ', '.join(values) for region in clinics_to_specialty_mapping.values() for key, values in region.items()}
+cleaned_anamnesa['clinics_specialty'] = cleaned_anamnesa['poli_id'].map(flat_mapping)

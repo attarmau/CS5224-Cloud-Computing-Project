@@ -1062,3 +1062,7 @@ combined_8_filtered = combined_8.merge(
     how='left',
     indicator=True
 ).query('_merge == "left_only"').drop(columns=['_merge'])
+
+# Total has 19,461 unique patients in RSISM Dataset
+count_unique_persons = combined_8_filtered['person_id'].nunique()
+print(f"Count of unique person_id in the filtered table: {count_unique_persons}")

@@ -966,3 +966,11 @@ fisik_mata = fisik_mata[['admission_id', 'person_id', 'fisik_mata_value']]
 fisik_mata = fisik_mata.drop_duplicates(subset=['admission_id', 'person_id'], keep='first')
 
 print(fisik_mata)
+
+combined_5['admission_id'] = combined_5['admission_id'].astype(str)
+combined_5['person_id'] = combined_5['person_id'].astype(str)
+fisik_mata['admission_id'] = fisik_mata['admission_id'].astype(str)
+fisik_mata['person_id'] = fisik_mata['person_id'].astype(str)
+
+combined_6 = combined_5.merge(fisik_mata, on=['admission_id', 'person_id'], how='left')
+combined_6

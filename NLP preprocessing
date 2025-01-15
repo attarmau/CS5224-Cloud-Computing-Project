@@ -102,3 +102,8 @@ cleaned_diagnosa = cleaned_diagnosa.fillna('')
 cleaned_diagnosa = cleaned_diagnosa[~cleaned_diagnosa['diagnosa_type'].isin(['rehab medik', 'pasca bedah'])]
 
 cleaned_diagnosa
+
+cleaned_diagnosa['admission_id'] = cleaned_diagnosa['admission_id'].astype(str)
+cleaned_admission['admission_id'] = cleaned_admission['admission_id'].astype(str)
+
+combined_df = cleaned_diagnosa.merge(cleaned_admission, on=['admission_id', 'person_id'], how='inner')

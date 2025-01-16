@@ -1073,35 +1073,3 @@ combined_8_filtered[columns_to_clean] = combined_8_filtered[columns_to_clean].fi
 
 # final 
 combined_8_filtered.to_csv('processed_dataset.csv', index=False)
-
-# Gender proportion 
-unique_values = combined_8_filtered['sex'].unique()
-print(unique_values)
-
-value_counts = combined_8_filtered['sex'].value_counts()
-print(value_counts)
-
-# Total has 50,171 rows of medical records
-combined_8_filtered_grouped = combined_8_filtered.groupby(
-    ['person_id', 'admission_id']
-).apply(lambda x: dict(zip(x['diagnosa_type'], x['diagnosa']))).reset_index(name='diagnosa_dict')
-
-combined_8_filtered_grouped
-
-# Number of 復健＆回診 as the primary diagnosis
-# Filter rows where diagnosa_type is 'primer' and diagnosa starts with 'Z50' (including variations like Z50.1, Z50.2, etc.) 復健
-rehab_medik_primary = cleaned_diagnosa[
-    (cleaned_diagnosa['diagnosa_type'] == 'primer') & (cleaned_diagnosa['diagnosa'].str.match('^Z50(\.\d+)?'))
-]
-
-unique_persons_rehab_medik = rehab_medik_primary['person_id'].nunique()
-
-print("Number of unique people with primary diagnose related to Z50 (rehab medik):", unique_persons_rehab_medik)
-
-# Filter rows where diagnosa_type is 'primer' and diagnosa starts with 'Z48' (including variations like Z48.1, Z48.2, etc.) 術後回診
-pasca_bedah_primary = cleaned_diagnosa[
-    (cleaned_diagnosa['diagnosa_type'] == 'primer') & (cleaned_diagnosa['diagnosa'].str.match('^Z48(\.\d+)?'))
-]
-unique_persons_pasca_bedah = pasca_bedah_primary['person_id'].nunique()
-
-print("Number of unique people with primary diagnose related to Z48 (pasca bedah):", unique_persons_pasca_bedah)

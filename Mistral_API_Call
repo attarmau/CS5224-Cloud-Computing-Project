@@ -1,1 +1,163 @@
+import re
+import requests
+import json
 
+def extract_admission_department(input_text):
+    match = re.search(r"Admission Department:\s*(.+)", input_text)
+    return match.group(1) if match else None
+
+department_icd10 = {
+    "INSTALASI GAWAT DARURAT": "Unspecified",
+    "Internal Medicine": ["A00-B99", "E00-E90", "K00-K95"],
+    "Cardiology": "I00-I99",
+    "Neurology": "G00-G99",
+    "Orthopedics": ["M00-M99", "S00-T88"],
+    "General Surgery": ["K00-K95", "C00-D49"],
+    "Pediatrics": {
+        "P00-P96": "Certain conditions originating in the perinatal period",
+        "Q00-Q99": "Congenital malformations, deformations, and chromosomal abnormalities"
+    },
+    "Obstetrics and Gynecology (OB/GYN)": {
+        "O00-O9A": "Pregnancy, childbirth, and the puerperium",
+        "N00-N99": "Diseases of the genitourinary system"
+    },
+            "Gastroenterology": {"K00-K95": "Diseases of the digestive system"},
+    "Nephrology": {"N00-N99": "Diseases of the genitourinary system"},
+    "Urology": {"N00-N99": "Diseases of the genitourinary system"},
+    "Dermatology": {"L00-L99": "Diseases of the skin and subcutaneous tissue"},
+    "Pulmonology": {"J00-J99": "Diseases of the respiratory system"},
+    "Oncology": {"C00-D49": "Neoplasms"},
+    "Hematology": {"D50-D89": "Diseases of the blood and blood-forming organs and certain disorders involving the immune mechanism"},
+    "Endocrinology": {"E00-E90": "Endocrine, nutritional, and metabolic diseases"},
+    "Infectious Diseases": {"A00-B99": "Infectious and parasitic diseases"},
+    "Rheumatology": {"M00-M99": "Diseases of the musculoskeletal system and connective tissue"},
+    "Otolaryngology (ENT)": {"H60-H95": "Diseases of the ear and mastoid process"},
+    "Ophthalmology": {"H00-H59": "Diseases of the eye and adnexa"},
+    "Psychiatry": {"F00-F99": "Mental, behavioral, and neurodevelopmental disorders"},
+    "Radiology": {"Unspecified": "Diagnostic imaging and interventional procedures for a wide range of ICD-10 codes"},
+    "Anesthesiology": {"Unspecified": "Preoperative, intraoperative, and postoperative care (not specific to one ICD-10 range)"},
+    "Pathology": {"Unspecified": "Laboratory analysis of samples for a wide range of ICD-10 codes"},
+    "Rehabilitation/Physical Therapy": {
+        "M00-M99": "Diseases of the musculoskeletal system and connective tissue",
+        "S00-T88": "Injury, poisoning, and certain other consequences of external causes"
+    },
+    "Allergy and Immunology": {
+        "J30-J39": "Other diseases of the upper respiratory tract",
+        "T78.4": "Allergy, unspecified"
+    },
+    "Plastic Surgery": {
+        "Q00-Q99": "Congenital malformations, deformations, and chromosomal abnormalities",
+        "S00-T88": "Injury, poisoning, and certain other consequences of external causes"
+    },
+    "Geriatrics": {"Unspecified": "Often deals with a broad range of conditions common in older adults"},
+    "Neonatology": {"P00-P96": "Certain conditions originating in the perinatal period"},
+    "Trauma Surgery": {"S00-T88": "Injury, poisoning, and certain other consequences of external causes"}
+}
+
+def get_icd10_for_department(department_name):
+    return department_icd10.get(department_name, "Unspecified")
+
+
+import pandas as pd
+import os
+from mistralai import Mistral
+
+api_key = "uu7ZX31EzrZ08kwwcl5E6fewOG6uwnhA"
+model = "mistral-large-latest"
+
+def connect_mistral(api_key):
+    try:
+        client = Mistral(api_key=api_key)
+    except Exception as e:
+        raise Exception(f"Failed to connect to Mistral API! Error: {e}")
+    return client
+
+client = connect_mistral(api_key)
+
+def do_query(query, client):
+    chat_response = client.chat.complete(
+        model=model,
+        messages=[{"role": "user", "content": query}],
+        temperature=0.95,
+        random_seed=1234
+    )
+    return chat_response
+
+def formatting_prompts_func_for_inference(examples):
+    instructions = examples["Instruction"]
+    inputs = examples["Input"]
+    outputs = examples["Output"]
+
+    texts = []
+    for instruction, input_text, output in zip(instructions, inputs, outputs):
+        admission_department = extract_admission_department(input_text)
+        department_icd10_mapping = get_icd10_for_department(admission_department) if admission_department else "Unspecified"
+
+        combined_instruction = f"""{instruction}
+
+Based on this, please diagnose the patient by following steps, taking into account two factors:
+(1) Patients admitted to {admission_department} department have a higher possibility to be diagnosed as ICD-10 codes between {department_icd10_mapping}, and
+(2) Patients may have a higher possibility to be diagnosed as ICD-10 codes similar to those in the Possible Diagnosis in patients' data.
+
+1. Suggest only 1 primary diagnosis based on ICD-10 code and include its description.
+2. Identify if there is any secondary diagnosis based on ICD-10 code and include their descriptions. If there is no secondary diagnosis, provide an empty JSON object. If there is any secondary diagnosis (up to 3), provide the response in a JSON object without explanations or notes.
+3. For the primary diagnosis, identify any differentials based on ICD-10 code and include their descriptions. If there are no differentials, provide an empty JSON object. If there are any differentials (up to 3), provide the response in a JSON object without explanations or notes.
+
+Combine the results into a JSON object similar to the following format, without explanations or notes:
+{{
+  "primary_diagnosis": {{(icd10 code for primary diagnosis): (icd10 code description)}},
+  "differentials_for_primary_diagnosis": {{(icd10 code for first differentials): (icd10 code description),(icd10 code for second differentials): (icd10 code description)}},
+  "secondary_diagnosis": {{(icd10 code for first secondary diagnosis): (icd10 code description), (icd10 code for second secondary diagnosis): (icd10 code description)}}
+}}
+
+Provide the response only in the JSON object and make sure the JSON object is valid. Do not provide any explanations or notes.
+"""
+
+        text = f"""Below is an instruction that describes a task, paired with an input that provides further context. Write a response that appropriately completes the request:
+
+### Instruction:
+{combined_instruction}
+
+### Input:
+{input_text}
+
+### Response:
+""" 
+        texts.append(text)
+
+    examples['formatted_input'] = texts
+    return examples
+
+test_dataset = pd.read_csv('/Users/judyhuang/Desktop/saved_test_dataset.csv')
+# sampled_cases = test_dataset.sample(n=10)
+formatted_sampled_cases = formatting_prompts_func_for_inference(test_dataset)
+
+predictions = []
+for idx, row in formatted_sampled_cases.iterrows():
+    input_text = row['formatted_input']
+    response = do_query(input_text, client)
+    
+    if response and hasattr(response, 'choices') and response.choices:
+        prediction_text = response.choices[0].message.content
+        
+        # Extract JSON if wrapped in a code block
+        json_match = re.search(r'```json\n(.*?)\n```', prediction_text, re.DOTALL)
+        if json_match:
+            prediction_text = json_match.group(1)
+        
+        try:
+            prediction = json.loads(prediction_text)
+        except json.JSONDecodeError:
+            prediction = None
+    else:
+        prediction = None
+
+    predictions.append(prediction)
+
+formatted_sampled_cases['Mistral Large Prediction'] = predictions
+print(formatted_sampled_cases)
+
+formatted_sampled_cases.to_csv('inference_results.csv', index=False)
+
+
+print(response)
